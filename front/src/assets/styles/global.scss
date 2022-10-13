@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+*,
+button,
+input,
+textarea{
+  outline: none;
+  border: 0;
+}
+html,
+body,
+#app {
+  height: 100%;
+}
+
+:root {
+  --primary: #36393F;
+  --secondary: #2F3136;
+  --tertiary: rgb(32, 34, 37);
+  --quaternary: #292B2F;
+  --quinary: #393D42;
+  --senary: #828386;
+  --white: #fff;
+  --grey: #8A8C90;
+  --chat-input: rgb(64, 68, 75);
+  --symbol: #74777A;
+  --notification: #F84A4B;
+  --discord: #6E86D6;
+  --mention-detail: #F9A839;
+  --mention-message: #413F3F;
+  --link: #5D80D6;
+}
