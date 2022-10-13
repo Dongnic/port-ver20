@@ -23,6 +23,7 @@
     "vue-material-design-icons": "^5.1.2",
     "vue-router": "^4.0.3",
     "vuetify": "^3.0.0-beta.0",
+    "vuetify-loader": "^1.9.2",
     "vuex": "^4.0.0",
     "webfontloader": "^1.0.0",
     "webstomp-client": "^1.2.6"

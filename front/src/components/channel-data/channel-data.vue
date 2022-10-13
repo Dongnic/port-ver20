@@ -38,7 +38,6 @@
         :authorName="msg.userid.username"
         :profileimage="msg.userid.profileimage"
         :date="msg.regdate"
-         style="white-space:pre-line"
         :isMe="msg.userid.id == userInfo.id"
       >
         {{ msg.message }}
@@ -204,12 +203,12 @@ export default {
         div.scrollTop = div.scrollHeight
       })
     },
-    chatRoomInfo (newInfo) {
+    async chatRoomInfo (newInfo) {
       console.log('chatRoomInfo')
       // socket 연결
       const socket = new SockJS('http://192.168.0.20:8080/ws')
       this.stompClient = Stomp.over(socket)
-      this.stompClient.connect({},
+      await this.stompClient.connect({},
         frame => {
           console.log('success', frame)
           console.log('chatRoomInfo.id : ', newInfo.id)
@@ -230,13 +229,15 @@ export default {
               div.scrollTop = div.scrollHeight
             })
           }, { userid: this.userInfo.id })
-          this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
-          this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
         },
         err => {
           console.log('fail', err)
         }
       )
+      setTimeout(() => {
+        this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
+        this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
+      }, 100)
     }
   }
 }

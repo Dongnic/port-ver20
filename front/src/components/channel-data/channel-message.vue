@@ -4,7 +4,7 @@
   <div v-if="isMe" class="channel-message myMessage" :class="{ hasMention: hasMention }" >
     <div class="message">
       <div class="body mybody">
-        <slot />
+          <slot />
       </div>
       <span class="date">{{ date }}</span>
     </div>
@@ -19,7 +19,7 @@
         <span class="bot" v-if="isBot">bot</span>
       </div>
       <div class="body">
-        <slot />
+          <slot />
         <span class="date">{{ date }}</span>
       </div>
     </div>
@@ -49,6 +49,7 @@ export default {
   margin-right: 4px;
   background-color: transparent;
   margin-top: 5px;
+  word-break: break-word;
 
   &.hasMention {
     background-color: var(--mention-message);
