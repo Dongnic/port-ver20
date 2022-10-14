@@ -1,7 +1,7 @@
 <template>
   <!-- layout  -->
   <div id="grid">
-    <ServerList :chatRoomList="chatRoomList" :activeChatRoom="activeChatRoom" @changeRoom="changeRoom"/>
+    <ServerList :chatRoomList="chatRoomList" :activeChatRoom="activeChatRoom" @changeRoom="changeRoom" :userInfo="userInfo"/>
     <ServerName :chatRoomName="chatRoomInfo.title" />
     <ChannelList />
     <ChannelInfo channelName="CRB's Channel" />
@@ -105,6 +105,7 @@ export default {
     changeRoom (no) {
       console.log(' PortChat changeRoom ', no)
       this.$store.dispatch('module1/changeActiveChatRoom', no)
+      this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
     }
   }
 }

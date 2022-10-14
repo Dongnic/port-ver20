@@ -1,5 +1,6 @@
 package com.im.port.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import com.im.port.service.IChatUserService;
 import com.im.port.service.IUserService;
 import com.im.port.vo.dto.ChatMessageDto;
 import com.im.port.vo.dto.ChatRoomDto;
+import com.im.port.vo.dto.ChatRoomSendDto;
 import com.im.port.vo.dto.ChatUserDto;
 import com.im.port.vo.dto.CreateRoomDto;
 import com.im.port.vo.dto.UserDto;
@@ -37,27 +39,33 @@ public class ChatRoomController {
 	private final IUserService userService;
 	private final IChatUserService chatUserService;
 	private final IChatMessageService chatMessageService;
-	
 
 	// 채팅방 생성
 	@PostMapping("/room")
 	public ResponseEntity<?> postRoom(@RequestBody CreateRoomDto createRoomDto) throws Exception {
-		
 		log.info(" ##### ChatRoomController postRoom");
+		System.out.println("CreateRoomDto getInviteList : "+createRoomDto.getInviteList());
 		UserDto userDto = userService.findUserById(createRoomDto.getUserid());
+		// 방 만들고 방 번호 반환
 		ChatRoomDto chatRoomDto= new ChatRoomDto();
 		chatRoomDto.setUserid(userDto.toEntity());
 		chatRoomDto.setTitle(createRoomDto.getTitle());
+		chatRoomDto.setDiscribe(createRoomDto.getDiscribe());
 		ChatRoomEntity creatRoomResult = chatRoomService.postRoom(chatRoomDto);
 		log.info(" ### ChatRoomController postRoom SUCCESS");
 		if (creatRoomResult.getId() >= 0){
 			ChatUserDto chatUserDto= new ChatUserDto();
-			chatUserDto.setUserid(chatRoomDto.getUserid());
 			chatUserDto.setChatroomid(creatRoomResult);
+			chatUserDto.setUserid(chatRoomDto.getUserid());
+			Long postChatUserResult = chatUserService.postChatUser(chatUserDto);
 			log.info(" ### chatUserDto : " + chatUserDto);
 			log.info(" #### ChatRoomController postChatUser");
-			Long postChatUserResult = chatUserService.postChatUser(chatUserDto);
 			log.info(" ### postChatUserResult : " + postChatUserResult);
+			for(int i=0; i<createRoomDto.getInviteList().size();i++){
+				userDto = userService.findUserById(createRoomDto.getInviteList().get(i));
+				chatUserDto.setUserid(userDto.toEntity());
+				postChatUserResult = chatUserService.postChatUser(chatUserDto);
+			}
 			return ResponseEntity.status(HttpStatus.OK).body(creatRoomResult.getId());
 		}
 		else
@@ -74,13 +82,25 @@ public class ChatRoomController {
 	}
 	// 참여 채팅방 목록 반환
 	@GetMapping("/rooms/{id}")
-	public ResponseEntity<List<ChatRoomDto>> getRoomList(@PathVariable("id") Long id) throws Exception {
+	public ResponseEntity<List<ChatRoomSendDto>> getRoomList(@PathVariable("id") Long userid) throws Exception {
 		log.info(" ##### ChatRoomController getRoomList");
-		log.info(" ### id : " + id);
-		List<ChatRoomDto> roomList = chatRoomService.getChatRooms(id);
-		if (roomList == null || roomList.size() == 0)
+		log.info(" ### id : " + userid);
+		List<ChatRoomDto> roomList = chatRoomService.getChatRooms(userid);
+		List<ChatRoomSendDto> chatRoomSendDtoList = new ArrayList<>();
+		for(int i=0; i < roomList.size(); i++){
+			Long cnt = chatMessageService.getMension(userid, roomList.get(i).getId());
+			ChatRoomSendDto chatRoomSendDto = new ChatRoomSendDto();
+			chatRoomSendDto.setId(roomList.get(i).getId());
+			chatRoomSendDto.setTitle(roomList.get(i).getTitle());
+			chatRoomSendDto.setDiscribe(roomList.get(i).getDiscribe());
+			chatRoomSendDto.setUserid(roomList.get(i).getUserid());
+			chatRoomSendDto.setMentions(cnt);
+			chatRoomSendDto.setRegdate(roomList.get(i).getRegdate());
+			chatRoomSendDtoList.add(chatRoomSendDto);
+		}
+		if (chatRoomSendDtoList == null || chatRoomSendDtoList.size() == 0)
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		return ResponseEntity.status(HttpStatus.OK).body(roomList);
+		return ResponseEntity.status(HttpStatus.OK).body(chatRoomSendDtoList);
 	}
 
 	// 특정 채팅방 정보 반환

@@ -208,26 +208,41 @@ export default {
       // socket 연결
       const socket = new SockJS('http://192.168.0.20:8080/ws')
       this.stompClient = Stomp.over(socket)
+      // 채널 변경시 다른 채널 unsubscribe
+      this.stompClient.unsubscribe(this.stompClient.subscriptions)
       await this.stompClient.connect({},
         frame => {
           console.log('success', frame)
+          const chatMessage = {
+            message: this.content,
+            chatroomid: this.chatRoomInfo,
+            userid: { id: 0 }
+          }
+          this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
           console.log('chatRoomInfo.id : ', newInfo.id)
           this.stompClient.subscribe('/sub/' + newInfo.id, res => {
+            console.log('new member in room')
+            console.log(' subscriptions ', this.stompClient.subscriptions)
             const jsonBody = JSON.parse(res.body)
             console.log('jsonBody : ', jsonBody)
-            const m = {
-              id: jsonBody.id,
-              userid: jsonBody.userid,
-              message: jsonBody.message, // .replace(/(?:\r\n|\r|\n)/g, '<br/>'),
-              regdate: jsonBody.regdate,
-              isMe: jsonBody.userid.id == this.userInfo.id
+            if (jsonBody.userid.id == 0) {
+              this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
+              this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
+            } else {
+              const m = {
+                id: jsonBody.id,
+                userid: jsonBody.userid,
+                message: jsonBody.message, // .replace(/(?:\r\n|\r|\n)/g, '<br/>'),
+                regdate: jsonBody.regdate,
+                isMe: jsonBody.userid.id == this.userInfo.id
+              }
+              this.$store.dispatch('module1/addChatMessage', m)
+              // this.messagesArray.push(m)
+              this.$nextTick(() => {
+                const div = document.getElementById('messages')
+                div.scrollTop = div.scrollHeight
+              })
             }
-            this.$store.dispatch('module1/addChatMessage', m)
-            // this.messagesArray.push(m)
-            this.$nextTick(() => {
-              const div = document.getElementById('messages')
-              div.scrollTop = div.scrollHeight
-            })
           }, { userid: this.userInfo.id })
         },
         err => {
@@ -237,7 +252,7 @@ export default {
       setTimeout(() => {
         this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
         this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
-      }, 100)
+      }, 300)
     }
   }
 }

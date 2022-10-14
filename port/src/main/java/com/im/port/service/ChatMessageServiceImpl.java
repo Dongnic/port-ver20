@@ -3,6 +3,7 @@ package com.im.port.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.im.port.repository.ChatMessageRepository;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ChatMessageServiceImpl implements IChatMessageService {
 
+    private final SimpMessagingTemplate template;
     private final ChatMessageRepository repository;
 
     @Override
@@ -36,5 +38,20 @@ public class ChatMessageServiceImpl implements IChatMessageService {
         log.info(" ##### ChatMessageServiceImpl postMessage");
         return repository.save(chatMessageDto.toEntity());
     }
+
+    @Override
+    public void returnMessage(String destination, ChatMessageDto chatMessageDto) {
+        template.convertAndSend(destination, chatMessageDto);
+    }
+    @Override
+    public void returnMessage(String destination, String message) {
+        template.convertAndSend(destination, message);
+    }
+
+    @Override
+    public Long getMension(Long userid, Long chatroomid) {
+        return repository.countMensionByChatroomidAndUserid(userid, chatroomid);
+    }
+
     
 }

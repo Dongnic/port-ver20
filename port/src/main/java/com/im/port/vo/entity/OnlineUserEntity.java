@@ -26,7 +26,7 @@ public class OnlineUserEntity {
     @Column(name = "onlineuserid")
     private Long id;
 
-    @Column(name = "userid")
+    @Column(name = "userid", unique = true)
     private String userid;
     
     @Column(name = "sessionid")

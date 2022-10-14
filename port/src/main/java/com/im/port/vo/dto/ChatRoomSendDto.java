@@ -2,7 +2,6 @@ package com.im.port.vo.dto;
 
 import java.sql.Timestamp;
 
-import com.im.port.vo.entity.ChatRoomEntity;
 import com.im.port.vo.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
@@ -14,20 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChatRoomDto {
+public class ChatRoomSendDto {
     private Long id;
     private String title;
     private String discribe;
     private UserEntity userid;
     private Timestamp regdate;
-
-    public ChatRoomEntity toEntity(){
-        return ChatRoomEntity.builder()
-                .id(id)
-                .title(title)
-                .discribe(discribe)
-                .userid(userid)
-                .regdate(regdate)
-                .build();
-    }
+    private Long mentions;
 }

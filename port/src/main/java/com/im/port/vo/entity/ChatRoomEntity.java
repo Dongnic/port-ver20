@@ -38,6 +38,9 @@ public class ChatRoomEntity {
 
     @ColumnDefault("'기본서버'")
     private String title;
+
+    @ColumnDefault("'프로그래밍'")
+    private String discribe;
     
     // @Column(nullable = false)
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH})
@@ -52,6 +55,7 @@ public class ChatRoomEntity {
         return ChatRoomDto.builder()
                 .id(id)
                 .title(title)
+                .discribe(discribe)
                 .userid(userid)
                 .regdate(regdate)
                 .build();

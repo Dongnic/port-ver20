@@ -9,4 +9,7 @@ import com.im.port.vo.entity.ChatMessageEntity;
 public interface IChatMessageService {
 	List<ChatMessageDto> getMessagesByChatroomId(ChatRoomDto chatRoomDto) throws Exception;
 	ChatMessageEntity postMessage(ChatMessageDto chatMessageDto) throws Exception;
+	public void returnMessage(String destination, ChatMessageDto chatMessageDto);
+	public void returnMessage(String destination, String message);
+	public Long getMension(Long userid, Long chatroomid);
 }

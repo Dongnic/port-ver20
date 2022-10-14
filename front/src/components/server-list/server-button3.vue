@@ -2,12 +2,14 @@
   <div
     class="server-button tab-button"
     :class="{
-      'serverButton-hasNotifications': hasNotifications,
-      'serverButton-isHome': isHome,
+      'serverButton-hasNotifications': chatRoomInfo.mentions > 0,
       active: selected
     }"
     @click="changeRoom"
-  >{{chatRoomInfo.id}}</div>
+  >
+    {{chatRoomInfo.id}}
+    <div v-if="chatRoomInfo.mentions && !selected" class="mentions">{{ chatRoomInfo.mentions }}</div>
+  </div>
 </template>
 
 <script>

@@ -24,187 +24,126 @@
         @changeRoom="changeRoom"
       >
       </server-button-3>
-              <v-btn
-                fab
-                color="cyan accent-2"
-                bottom
-                left
-                absolute
-                @click="dialog = !dialog"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-
-          <v-dialog
-            v-model="dialog"
-          >
-           <v-card
-      color="blue-grey darken-1"
-      dark
-      :loading="isUpdating"
-    >
-      <template v-slot:progress>
-        <v-progress-linear
-          absolute
-          color="green lighten-3"
-          height="4"
-          indeterminate
-        ></v-progress-linear>
-      </template>
-      <v-img
-        height="200"
-        src="https://cdn.vuetifyjs.com/images/cards/dark-beach.jpg"
+      <!-- 채널 생성버튼 -->
+      <v-btn
+        class="add-button"
+        fab
+        dark
+        color="cyan accent-2"
+        @click="dialog = !dialog"
       >
-        <v-row>
-          <v-col
-            class="text-right"
-            cols="12"
-          >
-            <v-menu
-              bottom
-              left
-              transition="slide-y-transition"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="isUpdating = true">
-                  <v-list-item-action>
-                    <v-icon>mdi-cog</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>Update</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-col>
-          <v-row
-            class="pa-4"
-            align="center"
-            justify="center"
-          >
-            <v-col class="text-center">
-              <h3 class="text-h5">
-                {{ name }}
-              </h3>
-              <span class="grey--text text--lighten-1">{{ title }}</span>
-            </v-col>
-          </v-row>
-        </v-row>
-      </v-img>
-      <v-form>
-        <v-container>
-          <v-row>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
 
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <v-text-field
-                v-model="name"
-                :disabled="isUpdating"
-                filled
-                color="blue-grey lighten-2"
-                label="Name"
-              ></v-text-field>
-            </v-col>
-
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <v-text-field
-                v-model="title"
-                :disabled="isUpdating"
-                filled
-                color="blue-grey lighten-2"
-                label="Title"
-              ></v-text-field>
-            </v-col>
-            
-            <v-col cols="12">
-
-              <v-autocomplete
-                v-model="friends"
-                :disabled="isUpdating"
-                :items="people"
-                filled
-                chips
-                color="blue-grey lighten-2"
-                label="Select"
-                item-text="name"
-                item-value="name"
-                multiple
-              >
-                <template v-slot:selection="data">
-                  <v-chip
-                    v-bind="data.attrs"
-                    :input-value="data.selected"
-                    close
-                    @click="data.select"
-                    @click:close="remove(data.item)"
-                  >
-                    <v-avatar left>
-                      <v-img :src="data.item.avatar"></v-img>
-                    </v-avatar>
-                    {{ data.item.name }}
-                  </v-chip>
-                </template>
-
-
-                <template v-slot:item="data">
-                  <template>
-                    <v-list-item-avatar>
-                      <img :src="data.item.avatar">
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                      <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
-                    </v-list-item-content>
-                  </template>
-                </template>
-              
-              
-              </v-autocomplete>
-            </v-col>
-
-          </v-row>
-        </v-container>
-      </v-form>
-      <v-divider></v-divider>
-      <v-card-actions>
-        <v-switch
-          v-model="autoUpdate"
-          :disabled="isUpdating"
-          class="mt-0"
-          color="green lighten-2"
-          hide-details
-          label="Auto Update"
-        ></v-switch>
-        <v-spacer></v-spacer>
-        <v-btn
-          :disabled="autoUpdate"
+      <v-dialog
+        v-model="dialog"
+      >
+      {{inviteList}}
+        <!-- 전체 감싸는 카드  -->
+      <v-card
+          color="blue-grey-darken-1"
+          dark
           :loading="isUpdating"
-          color="blue-grey darken-3"
-          depressed
-          @click="isUpdating = true"
         >
-          <v-icon left>
-            mdi-update
-          </v-icon>
-          Update Now
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-          </v-dialog>
+          <template v-slot:progress>
+            <v-progress-linear
+              absolute
+              color="green-lighten-3"
+              height="4"
+              indeterminate
+            ></v-progress-linear>
+          </template>
+          <v-img height="200" cover src="https://cdn.vuetifyjs.com/images/cards/dark-beach.jpg">
+            <v-row>
+              <v-col class="text-end" cols="12">
+                <v-menu location="bottom start" origin="overlap" transition="slide-y-transition">
+                </v-menu>
+              </v-col>
+              <v-row
+                class="pa-4"
+                align="center"
+                justify="center"
+              >
+                <v-col class="text-center">
+                  <h3 class="text-h5">
+                    {{ title }}
+                  </h3>
+                  <span class="text-grey-lighten-1">{{ discribe }}</span>
+                </v-col>
+              </v-row>
+            </v-row>
+          </v-img>
+          <v-form>
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="title"
+                    :disabled="isUpdating"
+                    filled
+                    color="blue-grey-lighten-2"
+                    label="방 이름"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="discribe"
+                    :disabled="isUpdating"
+                    filled
+                    color="blue-grey-lighten-2"
+                    label="용도"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    v-model="inviteList"
+                    :disabled="isUpdating"
+                    :items="people"
+                    filled
+                    chips
+                    closable-chips
+                    color="blue-grey-lighten-2"
+                    label="초대"
+                    item-title="name"
+                    item-value="id"
+                    multiple
+                  >
+                    <template v-slot:chip="{ props, item }">
+                      <v-chip
+                        v-bind="props"
+                        :prepend-avatar="item.raw.avatar"
+                        :text="item.raw.name"
+                      ></v-chip>
+                    </template>
+                    <template v-slot:item="{ props, item }">
+                      <v-list-item v-if="typeof item.raw !== 'object'" v-bind="props"></v-list-item>
+                      <v-list-item
+                        v-else
+                        v-bind="props"
+                        :prepend-avatar="item.raw.avatar"
+                        :title="item.raw.name"
+                        :subtitle="item.raw.group"
+                      ></v-list-item>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="isUpdating"
+              color="blue-grey-lighten-3"
+              prepend-icon="mdi-update"
+              @click="createChatRoom"
+            >
+              생성
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </div>
 </template>
@@ -213,11 +152,12 @@
 import HomeButton from './home-button.vue'
 import ServerButton from './server-button.vue'
 import ServerButton3 from './server-button3.vue'
-
+import $axios from 'axios'
 export default {
   props: {
     chatRoomList: Array,
-    activeChatRoom: Number
+    activeChatRoom: Number,
+    userInfo: Object
   },
   data () {
     const srcs = {
@@ -229,25 +169,22 @@ export default {
     }
     return {
       autoUpdate: true,
-      friends: ['Sandra Adams', 'Britta Holt'],
       isUpdating: false,
-      name: 'Midnight Crew',
+      dialog: false,
+      title: '코덕',
+      discribe: '코딩을 좋아하는 방',
+      inviteList: [],
       people: [
         { header: 'Group 1' },
-        { name: 'Sandra Adams', group: 'Group 1', avatar: srcs[1] },
-        { name: 'Ali Connors', group: 'Group 1', avatar: srcs[2] },
-        { name: 'Trevor Hansen', group: 'Group 1', avatar: srcs[3] },
-        { name: 'Tucker Smith', group: 'Group 1', avatar: srcs[2] },
+        { name: '유동준', group: 'Google', avatar: srcs[1], id: 1 },
+        { name: '정기준', group: 'GitHub', avatar: srcs[2], id: 3 },
+        { name: '앨런 쿠퍼', group: 'Naver', avatar: srcs[3], id: 4 },
+        { name: 'FanaTic', group: 'Naver', avatar: srcs[2], id: 5 },
         { divider: true },
         { header: 'Group 2' },
-        { name: 'Britta Holt', group: 'Group 2', avatar: srcs[4] },
-        { name: 'Jane Smith ', group: 'Group 2', avatar: srcs[5] },
-        { name: 'John Smith', group: 'Group 2', avatar: srcs[1] },
-        { name: 'Sandra Williams', group: 'Group 2', avatar: srcs[3] }
-      ],
-      title: 'The summer breeze',
-      dialog: false,
-      isobject: 'object'
+        { name: '윤정초이', group: 'GitHub', avatar: srcs[4], id: 6 },
+        { name: '기준 정', group: 'Google', avatar: srcs[5], id: 7 }
+      ]
     }
   },
   components: {
@@ -264,6 +201,41 @@ export default {
     changeRoom (no) {
       console.log(' list changeRoom ', no)
       this.$emit('changeRoom', no)
+    },
+    // 채팅방 생성
+    createChatRoom: function () {
+      console.log('createChatRoom')
+      console.log('title : ', this.title)
+      console.log('id : ', this.userInfo.id)
+      if (this.title == null) {
+        alert('필수값 누락')
+        return
+      }
+      if (this.userInfo.id == null) {
+        alert('로그인 하세요')
+        return
+      }
+      // const vm = this
+      const data = {
+        title: this.title,
+        discribe: this.discribe,
+        userid: this.userInfo.id,
+        inviteList: this.inviteList
+      }
+      console.log(data)
+      const vm = this
+      $axios
+        .post('/api/chat/room', data)
+        .then(function (response) {
+          alert('CREATE SUCESS')
+          vm.dialog = false
+          console.log('생성된 방번호(data) : ', response.data)
+          console.log('data type : ', typeof response.data)
+          vm.changeRoom(response.data)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     }
   }
 }
@@ -286,7 +258,28 @@ export default {
     display: none;
   }
 }
-
+.add-button {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px ;
+  height: 48px ;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+  &.active,
+  &:hover {
+    border-radius: 16px;
+    background-color: var(--discord);
+  }
+}
+.v-btn--size-default {
+  min-width: 48px !important;
+}
 .separator {
   width: 32px;
   margin-bottom: 8px;

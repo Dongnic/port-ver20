@@ -2,7 +2,6 @@ package com.im.port.controller;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,16 +18,22 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class MessageController {
 	private final ChatMessageServiceImpl chatMessageService;
-	private final SimpMessagingTemplate template;
 
 	@MessageMapping("/message")
 	public void sendMessage(@Payload ChatMessageDto chatMessage) throws Exception {
 		log.info("전달 메세지 : " + chatMessage);
-		
+		if(chatMessage.getUserid().getId() == 0){
+			System.out.println("/sub/ + chatMessage.getChatroomid().getId(), chatMessage");
+			// chatMessage.setId((long) 0);
+			// chatMessage.setMessage("update");
+			chatMessageService.returnMessage("/sub/" + chatMessage.getChatroomid().getId(), chatMessage);
+			return;
+		}
 		ChatMessageEntity chatMessageEntity = chatMessageService.postMessage(chatMessage);
+		
 		System.out.println("chatMessage : " + chatMessageEntity);
 		System.out.println("chatMessage.getChatroomid() : " + chatMessage.getChatroomid().getId());
 		System.out.println("chatMessageEntity.toDto().getChatroomid().getId() : " + chatMessageEntity.toDto().getChatroomid().getId());
-		template.convertAndSend("/sub/" + chatMessageEntity.toDto().getChatroomid().getId(), chatMessageEntity.toDto());
+		chatMessageService.returnMessage("/sub/" + chatMessageEntity.toDto().getChatroomid().getId(), chatMessageEntity.toDto());
 	}
 }

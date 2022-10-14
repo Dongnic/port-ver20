@@ -22,6 +22,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
                  + "   a.chatroomid as chatroomid "
                  + " , a.title as title "
                  + " , a.userid as userid "
+                 + " , a.discribe as discribe "
                  + " , a.regdate as regdate "
                  + " FROM chatroom a "
                  + " LEFT JOIN chatuser b "
