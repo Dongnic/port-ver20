@@ -42,18 +42,28 @@
       >
         {{ msg.message }}
       </ChannelMessage>
+      <!-- 이미지 업로드 -->  <div class="information">
+        <button @click="$refs.fileRef.click">선택</button>
+        <!-- <v-btn
+          class="add-button uplaod-button"
+          fab
+          dark
+          color="cyan accent-2"
+          @click="$refs.fileRef.click"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn> -->
+          <input type="file" @change="selectFile" multiple accept="image/*" ref="fileRef" hidden/>
+        </div>
+        <div class="images" v-if="files.length > 0">
+          <div v-for="fileName in files" :key="fileName" class="image">
+            <img :src="`${backendUrl}/image/${fileName}`" alt="이미지">
+          </div>
+        </div>
     </div>
     <!-- text타입으로 message 작성input tag
     enter키를 누르면 작성한 메세지를 전송-->
     <div class="input-wrapper">
-      <!-- <input
-        type="text"
-        name="message"
-        v-model="content"
-        placeholder="Type a message here, and press enter."
-        id="input-message"
-        @keypress.enter="sendMessage()"
-      /> -->
       <textarea
         name="message"
         v-model="content"
@@ -107,55 +117,13 @@ export default {
       date: '',
       content: '',
       mapOfStomp: [],
-      isConnected: false
+      isConnected: false,
+      files: []
     }
   },
   mounted () {
     console.log('== channel-data created==')
-    // const socket = new SockJS('http://192.168.0.20:8080/ws')
-    // this.stompClient = Stomp.over(socket)
-    // this.stompClient.connect({},
-    //   frame => {
-    //     console.log('success', frame)
-    //     const chatMessage = {
-    //       message: this.content,
-    //       chatroomid: { id: this.activeChatRoom },
-    //       userid: { id: 0 }
-    //     }
-    //     this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
-    //     console.log('chatRoomInfo.id : ', this.activeChatRoom)
-    //     console.log('chatRoomList : ', this.chatRoomList)
-    //     this.chatRoomList.forEach((cRoom, index) => {
-    //       console.log(' cRoom.idcRoom.id : ', cRoom.id)
-    //       console.log(' index index : ', index)
-    //       this.stompClient.subscribe('/sub/' + cRoom.id, res => {
-    //         const jsonBody = JSON.parse(res.body)
-    //         console.log('jsonBody : ', jsonBody)
-    //         if (jsonBody.chatroomid.id == this.chatRoomInfo.id) {
-    //           if (jsonBody.userid.id == 0) {
-    //             this.$store.dispatch('module1/getOnlineUserList', this.chatRoomInfo.id)
-    //             this.$store.dispatch('module1/getOfflineUserList', this.chatRoomInfo.id)
-    //           } else {
-    //             const msg = {
-    //               id: jsonBody.id,
-    //               userid: jsonBody.userid,
-    //               chatroomid: jsonBody.chatroomid,
-    //               message: jsonBody.message,
-    //               regdate: jsonBody.regdate,
-    //               isMe: jsonBody.userid.id == this.userInfo.id
-    //             }
-    //             this.$store.dispatch('module1/addChatMessage', msg)
-    //             this.messagesArray.push(msg)
-    //             this.$nextTick(() => {
-    //               const div = document.getElementById('messages')
-    //               div.scrollTop = div.scrollHeight
-    //             })
-    //           }
-    //         } else this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
-    //       }, { userid: this.userInfo.id })
-    //     })
-    //   },
-    //   err => { console.log('FAIL : ', err) })
+    this.fetchFiles()
   },
   methods: {
     sendMessage (e) {
@@ -173,9 +141,29 @@ export default {
           e.preventDefault()
         }
       } else { this.content += '\r\n' }
+    },
+    async fetchFiles () {
+      const response = await $axios.get(`${this.backendUrl}/files`)
+      this.files = response.data
+    },
+    selectFile (event) {
+      const formData = new FormData()
+      for (const file of event.target.files) {
+        formData.append('files', file)
+      }
+      $axios.post(`${this.backendUrl}/files`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(() => {
+        this.fetchFiles()
+      }).catch(error => {
+        alert(error.message)
+      })
     }
   },
   computed: {
+    backendUrl () {
+      return process.env.VUE_APP_BACKEND_URL
+    }
   },
   watch: {
     messagesArray () {

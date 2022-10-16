@@ -53,6 +53,7 @@ public class ChatRoomServiceImpl implements IChatRoomService {
 		log.info(" ##### ChatRoomServiceImpl getRoomInfo");
 		return repository.findById(chatRoomId).orElseThrow().toDto();
 	}
+	// 특정 채팅방 삭제
 	@Override
 	public void deleteRoom(Long chatRoomId) throws Exception {
 		log.info(" ##### ChatRoomServiceImpl deleteRoom");

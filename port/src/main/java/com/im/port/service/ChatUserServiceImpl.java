@@ -26,5 +26,10 @@ public class ChatUserServiceImpl implements IChatUserService{
     public int updateChatUser(UpdateChatUserDto chatUserDto) throws Exception {
         return repository.updateSQLToChatmessageid(chatUserDto.getChatmessageid(), chatUserDto.getUserid(), chatUserDto.getChatroomid());
     }
+
+    @Override
+    public int deleteChatUser(Long roomid, Long userid) throws Exception {
+        return repository.deleteSQLByRoomidAndUserid(roomid, userid);
+    }
     
 }

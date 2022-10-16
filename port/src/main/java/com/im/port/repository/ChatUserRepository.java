@@ -21,4 +21,14 @@ public interface ChatUserRepository extends JpaRepository<ChatUserEntity, Long> 
     public int updateSQLToChatmessageid(@Param("chatmessageid") Long chatmessageid
                                        , @Param("userid") Long userid
                                        , @Param("chatroomid") Long chatroomid);
+    
+    @Transactional
+    @Modifying
+    @Query(value = " DELETE FROM chatuser           "
+                 + " WHERE 1=1                      "
+                 + " AND chatroomid = :chatroomid   "
+                 + " AND userid = :userid           "
+                 , nativeQuery = true)                               
+    public int deleteSQLByRoomidAndUserid(@Param("chatroomid") Long roomid, @Param("userid") Long userid);
+
 }

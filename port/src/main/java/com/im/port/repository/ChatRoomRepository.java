@@ -12,12 +12,8 @@ import com.im.port.vo.entity.ChatRoomEntity;
 public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
     
     public Optional<ChatRoomEntity> findById(Long id);
-    
-    // @Query(value = " SELECT a.* "
-    //              + " FROM chatroom a, chatuser b "
-    //              + " WHERE 1=1 "
-    //              + " AND a.chatroomid = b.chatroomid "
-    //              + " AND b.chatuserid = :id ", nativeQuery = true)
+    public List<ChatRoomEntity> findByUserid(Long id);
+
     @Query(value = " SELECT "
                  + "   a.chatroomid as chatroomid "
                  + " , a.title as title "
@@ -30,8 +26,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
                  + " WHERE 1=1 "
                  + " AND b.userid = :userid ", nativeQuery = true)
     public List<ChatRoomEntity> selectSQLByUserid(@Param(value = "userid") Long id);
-    // @Query(value = " SELECT a FROM chatroom a WHERE a.userid.id = :id")
-    
-    public List<ChatRoomEntity> findByUserid(Long id);
 
 }

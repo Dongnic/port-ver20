@@ -34,7 +34,17 @@
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
-
+      <!-- 채널 나가기 -->
+      <v-btn
+        class="add-button"
+        fab
+        dark
+        color="red accent-2"
+        @click="outRoom"
+      >
+        <v-icon>mdi-minus</v-icon>
+      </v-btn>
+      <!-- 방 생성 모달창 -->
       <v-dialog
         v-model="dialog"
       >
@@ -236,6 +246,20 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
+    },
+    outRoom () {
+      if (confirm('정말 방에서 나가시겠습니까?')) {
+        $axios
+          .delete('/api/chat/room/' + this.activeChatRoom + '/' + this.userInfo.id)
+          .then(response => {
+          // console.log(' 삭제결과 : ', response.data)
+            alert(response.data)
+            this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
+          })
+          .catch(error => {
+            console.log(' DELETE FAIL : ', error)
+          })
+      }
     }
   }
 }
