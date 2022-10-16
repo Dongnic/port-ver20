@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.im.port.vo.dto.ChatRoomDto;
 import com.im.port.vo.dto.ChatRoomSendDto;
 import com.im.port.vo.dto.ChatUserDto;
 import com.im.port.vo.dto.CreateRoomDto;
+import com.im.port.vo.dto.UpdateChatUserDto;
 import com.im.port.vo.dto.UserDto;
 import com.im.port.vo.entity.ChatRoomEntity;
 
@@ -123,4 +125,14 @@ public class ChatRoomController {
 		List<ChatMessageDto> msgList = chatMessageService.getMessagesByChatroomId(chatRoomDto);
 		return ResponseEntity.status(HttpStatus.OK).body(msgList);
 	}
+	// 마지막 메세지 
+	@PutMapping("/chatuser")
+	public ResponseEntity<?> updateChatMessage(@RequestBody UpdateChatUserDto chatUserDto) throws Exception{
+		log.info(" ##### ChatRoomController updateChatMessage");
+		int result = chatUserService.updateChatUser(chatUserDto);
+		if (result > 0)
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UPDATE FAIL");
+	}
+
 }

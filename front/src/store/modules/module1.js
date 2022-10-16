@@ -115,11 +115,6 @@ export const module1 = {
     getChatRoomList ({ commit }, value) {
       console.log('=======getChatRoomList==========')
       console.log(' getChatRoomList value : ', value)
-      // if (state.userInfo.id == null) {
-      //   console.log(' !!!!!!! FAIL getChatRoomList 로그인 하세요')
-      //   return
-      // }
-      // const userid = state.userInfo.id
       $axios
         .get('/api/chat/rooms/' + value)
         .then(function (response) {

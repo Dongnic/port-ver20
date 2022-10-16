@@ -98,8 +98,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(onlineUserList);
     }
     // 오프라인 유저 리스트
-    @GetMapping("/offline/{id}")
-    public ResponseEntity<List<UserDto>> getOfflineUserList(@PathVariable("id") Long chatroomid) throws Exception{
+    @GetMapping("/offline/{chatroomid}")
+    public ResponseEntity<List<UserDto>> getOfflineUserList(@PathVariable("chatroomid") Long chatroomid) throws Exception{
         log.info(" ##### UserController getOfflineUserList");
         List<UserDto> offlineUserList = userService.getOfflineUserList(chatroomid);
         return ResponseEntity.status(HttpStatus.OK).body(offlineUserList);

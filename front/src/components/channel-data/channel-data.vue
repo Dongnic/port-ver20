@@ -79,7 +79,7 @@ import SockJS from 'sockjs-client'
 // Components
 import ChannelMessage from './channel-message'
 import Mention from './channel-mention'
-// import $axios from 'axios'
+import $axios from 'axios'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
 
@@ -93,7 +93,8 @@ export default {
     const messagesArray = computed(() => store.getters['module1/getChatMessageList'])
     const chatRoomInfo = computed(() => store.getters['module1/getChatRoomInfo'])
     const userInfo = computed(() => store.getters['module1/getUserInfo'])
-    return { messagesArray, chatRoomInfo, userInfo }
+    const chatRoomList = computed(() => store.getters['module1/getChatRoomList'])
+    return { messagesArray, chatRoomInfo, userInfo, chatRoomList }
   },
   components: {
     At,
@@ -104,95 +105,76 @@ export default {
     return {
       message: '',
       date: '',
-      content: ''
+      content: '',
+      mapOfStomp: [],
+      isConnected: false
     }
   },
-  // Get initial messages from the server (enable the "created()" function to connect with the server)
   mounted () {
-    // this.socket = io('http://192.168.0.20:8080/ws')
-    // this.socket.on('getInitialMessages', messages => {
-    //   this.messagesArray = messages
-    // }),
-    // 채팅방 내용 불러오기
     console.log('== channel-data created==')
-    // $axios.get('/api/chat/room/message/' + this.roomid)
-    //   .then(
-    //     res => {
-    //       console.log('ChatMessageList data : ', res.data)
-    //       this.messagesArray = []
-    //       for (let i = res.data.length - 1; i > -1; i--) {
-    //         const m = {
-    //           senderNickname: res.data[i].senderNickname,
-    //           content: res.data[i].content,
-    //           style: res.data[i].senderId == this.id ? 'myMsg' : 'otherMsg'
-    //         }
-    //         this.messagesArray.push(m)
-    //       }
-    //     },
-    //     err => {
-    //       console.log(err)
-    //       // alert('error : 새로고침하세요')
-    //     }
-    //   )
-    // // socket 연결
     // const socket = new SockJS('http://192.168.0.20:8080/ws')
     // this.stompClient = Stomp.over(socket)
     // this.stompClient.connect({},
     //   frame => {
     //     console.log('success', frame)
-    //     console.log('chatRoomInfo.id : ', this.chatRoomInfo.id)
-    //     this.stompClient.subscribe('/sub/' + this.chatRoomInfo.id, res => {
-    //       const jsonBody = JSON.parse(res.body)
-    //       console.log('jsonBody : ', jsonBody)
-    //       const m = {
-    //         id: jsonBody.id,
-    //         userid: jsonBody.userid,
-    //         message: jsonBody.message, // .replace(/(?:\r\n|\r|\n)/g, '<br/>'),
-    //         regdate: jsonBody.regdate,
-    //         isMe: jsonBody.userid.id == this.userInfo.id
-    //       }
-    //       this.messagesArray.push(m)
+    //     const chatMessage = {
+    //       message: this.content,
+    //       chatroomid: { id: this.activeChatRoom },
+    //       userid: { id: 0 }
+    //     }
+    //     this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
+    //     console.log('chatRoomInfo.id : ', this.activeChatRoom)
+    //     console.log('chatRoomList : ', this.chatRoomList)
+    //     this.chatRoomList.forEach((cRoom, index) => {
+    //       console.log(' cRoom.idcRoom.id : ', cRoom.id)
+    //       console.log(' index index : ', index)
+    //       this.stompClient.subscribe('/sub/' + cRoom.id, res => {
+    //         const jsonBody = JSON.parse(res.body)
+    //         console.log('jsonBody : ', jsonBody)
+    //         if (jsonBody.chatroomid.id == this.chatRoomInfo.id) {
+    //           if (jsonBody.userid.id == 0) {
+    //             this.$store.dispatch('module1/getOnlineUserList', this.chatRoomInfo.id)
+    //             this.$store.dispatch('module1/getOfflineUserList', this.chatRoomInfo.id)
+    //           } else {
+    //             const msg = {
+    //               id: jsonBody.id,
+    //               userid: jsonBody.userid,
+    //               chatroomid: jsonBody.chatroomid,
+    //               message: jsonBody.message,
+    //               regdate: jsonBody.regdate,
+    //               isMe: jsonBody.userid.id == this.userInfo.id
+    //             }
+    //             this.$store.dispatch('module1/addChatMessage', msg)
+    //             this.messagesArray.push(msg)
+    //             this.$nextTick(() => {
+    //               const div = document.getElementById('messages')
+    //               div.scrollTop = div.scrollHeight
+    //             })
+    //           }
+    //         } else this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
+    //       }, { userid: this.userInfo.id })
     //     })
     //   },
-    //   err => {
-    //     console.log('fail', err)
-    //   }
-    // )
+    //   err => { console.log('FAIL : ', err) })
   },
-  // Sending messages to server, and getting the returned messages
   methods: {
-    // writeMessage (message) {
-    //   this.socket.emit('sendMessage', message)
-    //   this.message = ''
-    //   this.getReturnedMessage()
-    // },
-    // getReturnedMessage () {
-    //   this.socket.on('returnMessage', messages => {
-    //     this.messagesArray = messages
-    //   })
-    // }
     sendMessage (e) {
       if (!e.ctrlKey) {
         if (this.content.trim() != '' && this.stompClient != null) {
           const chatMessage = {
             message: this.content,
             chatroomid: this.chatRoomInfo,
-            // chatroomid: {
-            //   id: this.chatRoomInfo.id,
-            //   title: this.chatRoomInfo.title,
-            //   regdate: this.chatRoomInfo.regdate,
-            //   userid: this.userInfo
-            // },
             userid: this.userInfo
           }
-          this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
-          this.content = ''
+          if (this.chatRoomInfo.id == this.activeChatRoom) {
+            this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
+            this.content = ''
+          } else console.log('방 번호가 일치하지 않습니다')
           e.preventDefault()
         }
       } else { this.content += '\r\n' }
     }
   },
-  // Get date
   computed: {
   },
   watch: {
@@ -202,57 +184,81 @@ export default {
         const div = document.getElementById('messages')
         div.scrollTop = div.scrollHeight
       })
+      if (this.messagesArray[this.messagesArray.length - 1] != undefined) {
+        console.log('마지막 메세지 번호 뽑기 ', this.messagesArray[this.messagesArray.length - 1])
+        const data = {
+          userid: this.userInfo.id,
+          chatroomid: this.activeChatRoom,
+          chatmessageid: this.messagesArray[this.messagesArray.length - 1].id
+        }
+        console.log(' Change message data : ', data)
+        $axios
+          .put('/api/chat/chatuser', data)
+          .then(function (response) {
+            console.log(' update messageid : ', response.data)
+          })
+          .catch(function (error) {
+            console.log('ERROR updateMessage : ', error)
+          })
+      }
     },
-    async chatRoomInfo (newInfo) {
-      console.log('chatRoomInfo')
-      // socket 연결
+    activeChatRoom (newChatRoom) {
+      console.log('chatRoomInfo : ', newChatRoom)
+      console.log('this.activeChatRoom : ', this.activeChatRoom)
+      if (this.isConnected) {
+        this.stompClient.disconnect(() => {
+          if (this.mapOfStomp.size > 0) {
+            this.stompClient.unsubscribe('/sub/' + newChatRoom)
+          }
+          this.isConnected = false
+        })
+      }
       const socket = new SockJS('http://192.168.0.20:8080/ws')
       this.stompClient = Stomp.over(socket)
-      // 채널 변경시 다른 채널 unsubscribe
-      this.stompClient.unsubscribe(this.stompClient.subscriptions)
-      await this.stompClient.connect({},
+      this.stompClient.connect({},
         frame => {
           console.log('success', frame)
+          this.isConnected = true
           const chatMessage = {
             message: this.content,
-            chatroomid: this.chatRoomInfo,
+            chatroomid: { id: this.activeChatRoom },
             userid: { id: 0 }
           }
           this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
-          console.log('chatRoomInfo.id : ', newInfo.id)
-          this.stompClient.subscribe('/sub/' + newInfo.id, res => {
-            console.log('new member in room')
-            console.log(' subscriptions ', this.stompClient.subscriptions)
-            const jsonBody = JSON.parse(res.body)
-            console.log('jsonBody : ', jsonBody)
-            if (jsonBody.userid.id == 0) {
-              this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
-              this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
-            } else {
-              const m = {
-                id: jsonBody.id,
-                userid: jsonBody.userid,
-                message: jsonBody.message, // .replace(/(?:\r\n|\r|\n)/g, '<br/>'),
-                regdate: jsonBody.regdate,
-                isMe: jsonBody.userid.id == this.userInfo.id
-              }
-              this.$store.dispatch('module1/addChatMessage', m)
-              // this.messagesArray.push(m)
-              this.$nextTick(() => {
-                const div = document.getElementById('messages')
-                div.scrollTop = div.scrollHeight
-              })
-            }
-          }, { userid: this.userInfo.id })
+          console.log('chatRoomInfo.id : ', this.activeChatRoom)
+          console.log('chatRoomList : ', this.chatRoomList)
+          this.chatRoomList.forEach((cRoom, index) => {
+            console.log(' cRoom.idcRoom.id : ', cRoom.id)
+            console.log(' index index : ', index)
+            this.stompClient.subscribe('/sub/' + cRoom.id, res => {
+              const jsonBody = JSON.parse(res.body)
+              console.log('jsonBody : ', jsonBody)
+              if (jsonBody.chatroomid.id == this.chatRoomInfo.id) {
+                if (jsonBody.userid.id == 0) {
+                  this.$store.dispatch('module1/getOnlineUserList', this.chatRoomInfo.id)
+                  this.$store.dispatch('module1/getOfflineUserList', this.chatRoomInfo.id)
+                } else {
+                  const msg = {
+                    id: jsonBody.id,
+                    userid: jsonBody.userid,
+                    chatroomid: jsonBody.chatroomid,
+                    message: jsonBody.message,
+                    regdate: jsonBody.regdate,
+                    isMe: jsonBody.userid.id == this.userInfo.id
+                  }
+                  this.$store.dispatch('module1/addChatMessage', msg)
+                  // this.messagesArray.push(msg)
+                  this.$nextTick(() => {
+                    const div = document.getElementById('messages')
+                    div.scrollTop = div.scrollHeight
+                  })
+                }
+              } else this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
+            }, { userid: this.userInfo.id })
+            this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
+          })
         },
-        err => {
-          console.log('fail', err)
-        }
-      )
-      setTimeout(() => {
-        this.$store.dispatch('module1/getOnlineUserList', newInfo.id)
-        this.$store.dispatch('module1/getOfflineUserList', newInfo.id)
-      }, 300)
+        err => { console.log('FAIL : ', err) })
     }
   }
 }
