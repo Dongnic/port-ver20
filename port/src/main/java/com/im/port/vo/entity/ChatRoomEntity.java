@@ -42,6 +42,9 @@ public class ChatRoomEntity {
     @ColumnDefault("'프로그래밍'")
     private String discribe;
     
+    @ColumnDefault("'logo.png'")
+    private String roomimage; // "sub"
+
     // @Column(nullable = false)
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH})
     @JsonIgnore
@@ -56,6 +59,7 @@ public class ChatRoomEntity {
                 .id(id)
                 .title(title)
                 .discribe(discribe)
+                .roomimage(roomimage)
                 .userid(userid)
                 .regdate(regdate)
                 .build();

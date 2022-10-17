@@ -18,6 +18,7 @@ public class ChatRoomDto {
     private Long id;
     private String title;
     private String discribe;
+    private String roomimage; 
     private UserEntity userid;
     private Timestamp regdate;
 
@@ -26,6 +27,7 @@ public class ChatRoomDto {
                 .id(id)
                 .title(title)
                 .discribe(discribe)
+                .roomimage(roomimage)
                 .userid(userid)
                 .regdate(regdate)
                 .build();

@@ -5,8 +5,13 @@
       'serverButton-hasNotifications': chatRoomInfo.mentions > 0,
       active: selected
     }"
+    :style="{'background-image' : 'url(' + `${backendUrl}/image/${chatRoomInfo.roomimage}` + ')' }"
     @click="changeRoom"
   >
+    <v-tooltip
+      activator="parent"
+      location="end"
+    >{{chatRoomInfo.id}}.-{{chatRoomInfo.title}}</v-tooltip>
     {{chatRoomInfo.id}}
     <div v-if="chatRoomInfo.mentions && !selected" class="mentions">{{ chatRoomInfo.mentions }}</div>
   </div>
@@ -42,7 +47,7 @@ export default {
   height: 48px;
   margin-bottom: 8px;
   border-radius: 50%;
-
+  background-size: cover;
   background-color: var(--primary);
   cursor: pointer;
   position: relative;

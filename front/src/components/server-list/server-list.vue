@@ -63,7 +63,9 @@
               indeterminate
             ></v-progress-linear>
           </template>
-          <v-img height="200" cover src="https://cdn.vuetifyjs.com/images/cards/dark-beach.jpg">
+          <button @click="$refs.fileRef.click" type="button">선택</button>
+          <input type="file" @change="selectFile" accept="image/*" ref="fileRef" hidden/>
+          <v-img v-if="imgLink != ''" height="200" cover :src="imgLink">
             <v-row>
               <v-col class="text-end" cols="12">
                 <v-menu location="bottom start" origin="overlap" transition="slide-y-transition">
@@ -184,6 +186,7 @@ export default {
       title: '코덕',
       discribe: '코딩을 좋아하는 방',
       inviteList: [],
+      imageLink: 'https://cdn.vuetifyjs.com/images/cards/dark-beach.jpg',
       people: [
         { header: 'Group 1' },
         { name: '유동준', group: 'Google', avatar: srcs[1], id: 1 },
@@ -211,6 +214,11 @@ export default {
     changeRoom (no) {
       console.log(' list changeRoom ', no)
       this.$emit('changeRoom', no)
+    },
+    selectFile (event) {
+      console.log('target[0] : ', event.target.files[0])
+      console.log('imageLink : ', this.imageLink)
+      this.imageLink = URL.createObjectURL(event.target.files[0])
     },
     // 채팅방 생성
     createChatRoom: function () {

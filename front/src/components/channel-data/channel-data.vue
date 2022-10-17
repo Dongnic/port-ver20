@@ -17,6 +17,8 @@
         <a class="link" href="https://github.com/Dongnic"
           >my github</a
         >
+        imagesLink : {{imagesLink}}
+        filedatas : {{filedatas}}
       </ChannelMessage>
       <!--메세지 1번 반복, 작성자는 Bot-->
       <ChannelMessage
@@ -40,10 +42,18 @@
         :date="msg.regdate"
         :isMe="msg.userid.id == userInfo.id"
       >
-        {{ msg.message }}
+      <span v-html="msg.message"></span>
+        <!-- {{ msg.message }} -->
       </ChannelMessage>
-      <!-- 이미지 업로드 -->  <div class="information">
-        <button @click="$refs.fileRef.click">선택</button>
+      <!-- 이미지 업로드 -->
+      <div class="information">
+        <button @click="$refs.fileRef.click" type="button">선택</button>
+        <button @click="uploadFile" type="button">전송</button>
+        <div class="images" v-if="imagesLink.length > 0">
+          <div v-for="(imglink, index) in imagesLink" :key="index" class="image">
+            <img :src="imglink" class="imageBox"/>
+          </div>
+        </div>
         <!-- <v-btn
           class="add-button uplaod-button"
           fab
@@ -53,23 +63,36 @@
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn> -->
-          <input type="file" @change="selectFile" multiple accept="image/*" ref="fileRef" hidden/>
-        </div>
+        <input type="file" @change="selectFile" multiple accept="image/*" ref="fileRef" hidden/>
         <div class="images" v-if="files.length > 0">
-          <div v-for="fileName in files" :key="fileName" class="image">
-            <img :src="`${backendUrl}/image/${fileName}`" alt="이미지">
+          <div v-for="(file, index) in files" :key="index" class="image">
+            <img v-if="file.storedFileName != ''" :src="`${backendUrl}/image/${file.storedFileName}`" alt="이미지">
           </div>
         </div>
+      </div>
     </div>
     <!-- text타입으로 message 작성input tag
     enter키를 누르면 작성한 메세지를 전송-->
     <div class="input-wrapper">
-      <textarea
+      {{content}}
+      <!-- <textarea
         name="message"
         v-model="content"
         placeholder="Type a message here, and press enter."
         id="input-message"
         @keypress.enter="sendMessage"
+      /> -->
+      <QuillEditor
+        ref="myEditor"
+        :toolbar="['bold', 'italic', 'underline']"
+        theme="snow"
+        name="message"
+        id="input-message"
+        placeholder="Type a message here, and press enter."
+        v-model:content="content"
+        contentType="html"
+        @keyup.enter.prevent="sendMessage"
+        class="edit"
       />
       <!--아이콘-->
       <div class="icon">
@@ -92,6 +115,9 @@ import Mention from './channel-mention'
 import $axios from 'axios'
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+// Editor
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 export default {
   name: 'channel-data',
@@ -109,7 +135,8 @@ export default {
   components: {
     At,
     ChannelMessage,
-    Mention
+    Mention,
+    QuillEditor
   },
   data () {
     return {
@@ -118,15 +145,18 @@ export default {
       content: '',
       mapOfStomp: [],
       isConnected: false,
-      files: []
+      files: [],
+      selectedData: [],
+      imagesLink: [],
+      filedatas: []
     }
   },
   mounted () {
     console.log('== channel-data created==')
-    this.fetchFiles()
   },
   methods: {
     sendMessage (e) {
+      console.log('eeeeeeeeeeeeee : ', e)
       if (!e.ctrlKey) {
         if (this.content.trim() != '' && this.stompClient != null) {
           const chatMessage = {
@@ -134,27 +164,50 @@ export default {
             chatroomid: this.chatRoomInfo,
             userid: this.userInfo
           }
+          this.content = ''
+          this.$refs.myEditor.setHTML('')
           if (this.chatRoomInfo.id == this.activeChatRoom) {
             this.stompClient.send('/pub/message', JSON.stringify(chatMessage), {})
-            this.content = ''
           } else console.log('방 번호가 일치하지 않습니다')
           e.preventDefault()
         }
-      } else { this.content += '\r\n' }
+      } else {
+        console.log(' 안 눌렸어 컨트롤 ')
+        this.content += '\r\n'
+      }
     },
-    async fetchFiles () {
-      const response = await $axios.get(`${this.backendUrl}/files`)
-      this.files = response.data
-    },
+    // async fetchFiles () {
+    //   const response = await $axios.get(`${this.backendUrl}/files`)
+    //   this.files = response.data
+    // },
     selectFile (event) {
-      const formData = new FormData()
+      this.filedatas = []
+      this.imagesLink = []
       for (const file of event.target.files) {
+        console.log('file : ', file)
+        const url = URL.createObjectURL(file)
+        this.filedatas.push('files', file)
+        this.imagesLink.push(url)
+      }
+      console.log('filedatas[0]', this.filedatas[0])
+      console.log('imagesLink[0]', this.imagesLink[0])
+    },
+    uploadFile () {
+      this.imagesLink = []
+      const formData = new FormData()
+      for (const file of this.filedatas) {
         formData.append('files', file)
       }
+      formData.append('messageid', 1)
+      console.log('formData messageid : ', formData.get('messageid'))
+      console.log('formData files : ', formData.get('files'))
       $axios.post(`${this.backendUrl}/files`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
-      }).then(() => {
-        this.fetchFiles()
+      }).then((response) => {
+        console.log(' 업로드 한 파일 데이터 : ', response.data)
+        this.files = response.data
+        console.log(this.files)
+        // this.fetchFiles()
       }).catch(error => {
         alert(error.message)
       })
@@ -163,6 +216,9 @@ export default {
   computed: {
     backendUrl () {
       return process.env.VUE_APP_BACKEND_URL
+    },
+    websocketUrl () {
+      return process.env.VUE_APP_WEBSOCKET_URL
     }
   },
   watch: {
@@ -201,7 +257,7 @@ export default {
           this.isConnected = false
         })
       }
-      const socket = new SockJS('http://192.168.0.20:8080/ws')
+      const socket = new SockJS(`${this.websocketUrl}`)
       this.stompClient = Stomp.over(socket)
       this.stompClient.connect({},
         frame => {
@@ -269,7 +325,7 @@ export default {
   height: 68px;
 
   // input,
-  textarea {
+  textarea, .edit {
     margin-top: 12px;
     width: 100%;
     height: 44px;
@@ -297,8 +353,8 @@ export default {
 .messages {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 46px - 68px);
-  max-height: calc(100vh - 46px - 68px);
+  height: calc(100vh - 46px - 100px);
+  max-height: calc(100vh - 46px - 100px);
   overflow-y: scroll;
 
   .channelmessage:first-child {

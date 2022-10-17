@@ -17,6 +17,7 @@ public class ChatRoomSendDto {
     private Long id;
     private String title;
     private String discribe;
+    private String roomimage;
     private UserEntity userid;
     private Timestamp regdate;
     private Long mentions;

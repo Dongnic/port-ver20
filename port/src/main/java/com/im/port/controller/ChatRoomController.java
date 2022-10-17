@@ -96,6 +96,7 @@ public class ChatRoomController {
 			chatRoomSendDto.setId(roomList.get(i).getId());
 			chatRoomSendDto.setTitle(roomList.get(i).getTitle());
 			chatRoomSendDto.setDiscribe(roomList.get(i).getDiscribe());
+			chatRoomSendDto.setRoomimage(roomList.get(i).getRoomimage());
 			chatRoomSendDto.setUserid(roomList.get(i).getUserid());
 			chatRoomSendDto.setMentions(cnt);
 			chatRoomSendDto.setRegdate(roomList.get(i).getRegdate());
