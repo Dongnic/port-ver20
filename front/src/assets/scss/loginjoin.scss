@@ -140,4 +140,11 @@ body{
   .hide{
     display: none;
   }
+
+  div.mybody > span:nth-child(1) > p > img{
+    max-width: 50% !important;
+  }
   
+  #input-message > div.ql-editor > p > img{
+    max-width: 20% !important;
+  }

@@ -20,11 +20,11 @@
       <img class="github login-Logo" src="https://w7.pngwing.com/pngs/490/316/png-transparent-computer-icons-github-github-icon-cat-like-mammal-carnivoran-black.png" />
     </a>
     &nbsp;
-    <a href="/oauth2/authorization/naver?redirect_uri=http://192.168.0.20:8080/test">
+    <a href="/oauth2/authorization/naver?redirect_uri=http://192.168.0.20:8080/PortChat">
       <img class="naver login-Logo" src="https://t1.daumcdn.net/cfile/tistory/994331335F52047D05" />
     </a>
     &nbsp;
-    <a href="/oauth2/authorization/kakao?redirect_uri=http://192.168.0.20:8080/test">
+    <a href="/oauth2/authorization/kakao?redirect_uri=http://192.168.0.20:8080/PortChat">
       <img class="kakao login-Logo" src="https://www.gotchawashmall.com/design/gotcha82/gotcha/img/kakao.png" />
     </a>
   </div>

@@ -6,7 +6,9 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
+import com.im.port.config.interceptor.AgentWebSocketHandlerDecoratorFactory;
 import com.im.port.config.interceptor.MyChannelInterceptor;
 
 import lombok.RequiredArgsConstructor;
@@ -45,4 +47,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		log.info(" ##### WebSocketConfig configureClientInboundChannel");
         registration.interceptors(myChannelInterceptor);
     }
+
+	// @Override
+    // public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+    //     registration.setDecoratorFactories(new AgentWebSocketHandlerDecoratorFactory());
+    // } 
+	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+		registration.setMessageSizeLimit(102400* 1024); 
+	}
 }

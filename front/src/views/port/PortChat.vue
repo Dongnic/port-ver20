@@ -4,7 +4,7 @@
     <ServerList :chatRoomList="chatRoomList" :activeChatRoom="activeChatRoom" @changeRoom="changeRoom" :userInfo="userInfo"/>
     <ServerName :chatRoomName="chatRoomInfo.title" />
     <ChannelList />
-    <ChannelInfo channelName="CRB's Channel" />
+    <ChannelInfo :chatRoomInfo="chatRoomInfo" />
     <ChannelData :userInfo="userInfo" :activeChatRoom="activeChatRoom" :chatRoomInfo="chatRoomInfo" />
     <UserInfo :userInfo="userInfo" />
     <UserList :onlineUserList="onlineUserList" :offlineUserList="offlineUserList" />

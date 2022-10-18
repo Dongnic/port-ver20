@@ -13,12 +13,9 @@
         authorName="채널 안내"
         :date="getDate"
       >
-        Well come to my discord-clone. See this project in
         <a class="link" href="https://github.com/Dongnic"
-          >my github</a
+          >github</a
         >
-        imagesLink : {{imagesLink}}
-        filedatas : {{filedatas}}
       </ChannelMessage>
       <!--메세지 1번 반복, 작성자는 Bot-->
       <ChannelMessage
@@ -31,7 +28,6 @@
       >
         <Mention>{{userInfo.username}}</Mention> Hii, how are you ??
       </ChannelMessage>
-      <ChannelMessage>{{userInfo}}</ChannelMessage>
       <!--message 배열만큼 반복, User 1의 작성자가
       현재 날짜로-->
       <ChannelMessage
@@ -74,7 +70,7 @@
     <!-- text타입으로 message 작성input tag
     enter키를 누르면 작성한 메세지를 전송-->
     <div class="input-wrapper">
-      {{content}}
+      <!-- <p>{{content}}</p> -->
       <!-- <textarea
         name="message"
         v-model="content"
@@ -84,20 +80,22 @@
       /> -->
       <QuillEditor
         ref="myEditor"
-        :toolbar="['bold', 'italic', 'underline']"
+        :toolbar="['bold', 'italic', 'underline', 'image', 'link']"
         theme="snow"
         name="message"
         id="input-message"
         placeholder="Type a message here, and press enter."
         v-model:content="content"
         contentType="html"
-        @keyup.enter.prevent="sendMessage"
         class="edit"
-      />
+        @keydown.enter.prevent="sendMessage"
+        style="height: 59% !important
+                overflow-y: scroll"
+        />
       <!--아이콘-->
-      <div class="icon">
+      <!-- <div class="icon">
         <At :size="24" />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -105,7 +103,7 @@
 <!-- 변수를 정의해놓은 import-->
 <script>
 /* eslint eqeqeq: "off" */
-import At from 'vue-material-design-icons/At'
+// import At from 'vue-material-design-icons/At'
 // import { io } from 'socket.io-client'
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
@@ -130,10 +128,26 @@ export default {
     const chatRoomInfo = computed(() => store.getters['module1/getChatRoomInfo'])
     const userInfo = computed(() => store.getters['module1/getUserInfo'])
     const chatRoomList = computed(() => store.getters['module1/getChatRoomList'])
-    return { messagesArray, chatRoomInfo, userInfo, chatRoomList }
+    const keyboard = {
+      bindings: {
+        enter: {
+          key: 'enter',
+          handler: function () {
+            console.log('enter')
+          }
+        },
+        tab: {
+          key: 9,
+          handler: function () {
+            console.log('tab')
+          }
+        }
+      }
+    }
+    return { messagesArray, chatRoomInfo, userInfo, chatRoomList, keyboard }
   },
   components: {
-    At,
+    // At,
     ChannelMessage,
     Mention,
     QuillEditor
@@ -160,7 +174,7 @@ export default {
       if (!e.ctrlKey) {
         if (this.content.trim() != '' && this.stompClient != null) {
           const chatMessage = {
-            message: this.content,
+            message: this.content.slice(0, -11),
             chatroomid: this.chatRoomInfo,
             userid: this.userInfo
           }
@@ -173,7 +187,9 @@ export default {
         }
       } else {
         console.log(' 안 눌렸어 컨트롤 ')
-        this.content += '\r\n'
+        // this.$refs.myEditor.innerText += '\r\n'
+        // this.content += '\r\n'
+        this.content += '<p><br></p>'
       }
     },
     // async fetchFiles () {
@@ -186,6 +202,7 @@ export default {
       for (const file of event.target.files) {
         console.log('file : ', file)
         const url = URL.createObjectURL(file)
+        console.log(url)
         this.filedatas.push('files', file)
         this.imagesLink.push(url)
       }
@@ -318,12 +335,14 @@ export default {
   background-color: var(--primary);
   flex: 1;
 }
-
 .input-wrapper {
   width: 100%;
-  padding: 0 16px;
-  height: 68px;
+  // padding: 0 16px;
+  height: 110px;
 
+  p{
+    white-space: pre-wrap;
+  }
   // input,
   textarea, .edit {
     margin-top: 12px;
@@ -333,13 +352,22 @@ export default {
     border-radius: 5px;
     color: var(--white);
     background-color: var(--chat-input);
-
     &::placeholder {
       color: var(--grey);
       font-size: 16px;
     }
   }
-
+  #input-message{
+    position: fixed;
+    bottom: 80px;
+  }
+  #grid > div:nth-child(5) > div.input-wrapper > div.ql-toolbar.ql-snow {
+    position: fixed;
+    bottom: 80px;
+  }
+  // .ql-container {
+  //   height: 48% !important;
+  // }
   .icon {
     color: var(--grey);
     position: relative;
@@ -349,34 +377,35 @@ export default {
     width: 24px;
   }
 }
-
 .messages {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 46px - 100px);
-  max-height: calc(100vh - 46px - 100px);
+  height: calc(100vh - 157px);
+  max-height: calc(100vh - 157px);
   overflow-y: scroll;
-
   .channelmessage:first-child {
     margin-top: 0;
   }
-
   &::-webkit-scrollbar {
     width: 8px;
   }
-
   &::-webkit-scrollbar-thumb {
     background-color: var(--tertiary);
     border-radius: 4px;
   }
-
   &::-webkit-scrollbar-track {
     background-color: var(--primary);
   }
 }
-
 .link {
   color: var(--grey);
   outline: none;
+}
+.ql-toolbar .ql-editor img{
+  max-width: 20% !important;
+  height: auto !important;
+}
+.mybody span img {
+  max-width: 50% !important;
 }
 </style>

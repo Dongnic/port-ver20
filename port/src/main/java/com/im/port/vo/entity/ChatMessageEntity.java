@@ -44,7 +44,7 @@ public class ChatMessageEntity {
     @JoinColumn(name="chatroomid")
     private ChatRoomEntity chatroomid;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String message;
     
     @CreationTimestamp

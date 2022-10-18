@@ -12,7 +12,6 @@
       activator="parent"
       location="end"
     >{{chatRoomInfo.id}}.-{{chatRoomInfo.title}}</v-tooltip>
-    {{chatRoomInfo.id}}
     <div v-if="chatRoomInfo.mentions && !selected" class="mentions">{{ chatRoomInfo.mentions }}</div>
   </div>
 </template>
@@ -26,6 +25,11 @@ export default {
     mentions: Number,
     no: Number,
     chatRoomInfo: Object
+  },
+  computed: {
+    backendUrl () {
+      return process.env.VUE_APP_BACKEND_URL
+    }
   },
   methods: {
     changeRoom () {

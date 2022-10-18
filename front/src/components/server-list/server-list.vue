@@ -9,12 +9,6 @@
     <HomeButton  />
     <div class="separator"></div>
     <div id="server">
-      <ServerButton selected hasNotifications :mentions="3" />
-      <ServerButton :mentions="9" />
-      <ServerButton hasNotifications :mentions="0" />
-      <ServerButton hasNotifications :mentions="12" />
-      <ServerButton />
-      <div class="separator"></div>
       <server-button-3
         v-for="(chatRoom, index) in chatRoomList"
         :key="index"
@@ -64,8 +58,14 @@
             ></v-progress-linear>
           </template>
           <button @click="$refs.fileRef.click" type="button">선택</button>
+          {{imgLink}}
           <input type="file" @change="selectFile" accept="image/*" ref="fileRef" hidden/>
-          <v-img v-if="imgLink != ''" height="200" cover :src="imgLink">
+          <div class="images" v-if="imageLink.length > 0">
+            <div v-for="(imglink, index) in imageLink" :key="index" class="image imgdiv">
+              <img :src="imglink" class="titleImageBox" />
+            </div>
+          </div>
+          <!-- <img style="{'height':'200px', 'background-size': 'cover'}" :src="imgLink"> -->
             <v-row>
               <v-col class="text-end" cols="12">
                 <v-menu location="bottom start" origin="overlap" transition="slide-y-transition">
@@ -84,7 +84,7 @@
                 </v-col>
               </v-row>
             </v-row>
-          </v-img>
+          <!-- </v-img> -->
           <v-form>
             <v-container>
               <v-row>
@@ -114,7 +114,7 @@
                     filled
                     chips
                     closable-chips
-                    color="blue-grey-lighten-2"
+                    color="black-grey-lighten-2"
                     label="초대"
                     item-title="name"
                     item-value="id"
@@ -162,7 +162,6 @@
 
 <script>
 import HomeButton from './home-button.vue'
-import ServerButton from './server-button.vue'
 import ServerButton3 from './server-button3.vue'
 import $axios from 'axios'
 export default {
@@ -186,15 +185,12 @@ export default {
       title: '코덕',
       discribe: '코딩을 좋아하는 방',
       inviteList: [],
-      imageLink: 'https://cdn.vuetifyjs.com/images/cards/dark-beach.jpg',
+      imageLink: ['https://i.esdrop.com/d/f/14rMlVHaTh/diKJSu5rRf.png'],
       people: [
-        { header: 'Group 1' },
         { name: '유동준', group: 'Google', avatar: srcs[1], id: 1 },
         { name: '정기준', group: 'GitHub', avatar: srcs[2], id: 3 },
         { name: '앨런 쿠퍼', group: 'Naver', avatar: srcs[3], id: 4 },
         { name: 'FanaTic', group: 'Naver', avatar: srcs[2], id: 5 },
-        { divider: true },
-        { header: 'Group 2' },
         { name: '윤정초이', group: 'GitHub', avatar: srcs[4], id: 6 },
         { name: '기준 정', group: 'Google', avatar: srcs[5], id: 7 }
       ]
@@ -202,7 +198,6 @@ export default {
   },
   components: {
     HomeButton,
-    ServerButton,
     ServerButton3
   },
   watch: {
@@ -216,9 +211,12 @@ export default {
       this.$emit('changeRoom', no)
     },
     selectFile (event) {
-      console.log('target[0] : ', event.target.files[0])
+      this.imageLink = []
+      for (const file of event.target.files) {
+        const url = URL.createObjectURL(file)
+        this.imageLink.push(url)
+      }
       console.log('imageLink : ', this.imageLink)
-      this.imageLink = URL.createObjectURL(event.target.files[0])
     },
     // 채팅방 생성
     createChatRoom: function () {
@@ -316,5 +314,12 @@ export default {
   width: 32px;
   margin-bottom: 8px;
   border-bottom: solid 2px var(--grey);
+}
+.titleImageBox{
+  height: 200px;
+  background-size: cover;
+}
+.imgdiv{
+  text-align: center;
 }
 </style>

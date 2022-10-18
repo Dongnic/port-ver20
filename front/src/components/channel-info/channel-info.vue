@@ -6,9 +6,9 @@
       <HashTagIcon class="iconElement" :size="24" />
     </div>
     <!-- 부모 내용에서 가져온 channelName String 값 보여주기 -->
-    <h1 class="title">{{ channelName }}</h1>
+    <h1 class="title">{{ chatRoomInfo.title }}</h1>
     <div class="separator" />
-    <div class="description">Lorem ipsum dolor sit amet...</div>
+    <div class="description">{{ chatRoomInfo.discribe }}</div>
 
     <input type="text" name="search" />
   </div>
@@ -22,7 +22,7 @@ import HashTagIcon from 'vue-material-design-icons/Pound'
 export default {
   props: {
     // channelName 글자형태로
-    channelName: String
+    chatRoomInfo: Object
   },
   // import 한 hashtagicon 사용을 위해 정의
   components: {
