@@ -42,29 +42,28 @@
       <v-dialog
         v-model="dialog"
       >
-      {{inviteList}}
         <!-- 전체 감싸는 카드  -->
       <v-card
-          color="blue-grey-darken-1"
+          color="blue-black-darken-1"
           dark
           :loading="isUpdating"
         >
           <template v-slot:progress>
             <v-progress-linear
               absolute
-              color="green-lighten-3"
+              color="black-lighten-3"
               height="4"
               indeterminate
             ></v-progress-linear>
           </template>
-          <button @click="$refs.fileRef.click" type="button">선택</button>
-          {{imgLink}}
+          <br><div class="createTitle"><h3>방 생성</h3></div><br>
           <input type="file" @change="selectFile" accept="image/*" ref="fileRef" hidden/>
           <div class="images" v-if="imageLink.length > 0">
             <div v-for="(imglink, index) in imageLink" :key="index" class="image imgdiv">
-              <img :src="imglink" class="titleImageBox" />
+              <img :src="imglink" class="titleImageBox" @click="$refs.fileRef.click" />
             </div>
           </div>
+          <button v-else @click="$refs.fileRef.click" type="button">선택</button>
           <!-- <img style="{'height':'200px', 'background-size': 'cover'}" :src="imgLink"> -->
             <v-row>
               <v-col class="text-end" cols="12">
@@ -77,9 +76,9 @@
                 justify="center"
               >
                 <v-col class="text-center">
-                  <h3 class="text-h5">
+                  <h4 class="text-h5">
                     {{ title }}
-                  </h3>
+                  </h4>
                   <span class="text-grey-lighten-1">{{ discribe }}</span>
                 </v-col>
               </v-row>
@@ -95,25 +94,28 @@
                     filled
                     color="blue-grey-lighten-2"
                     label="방 이름"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
+                    placeholder="방 이름을 입력해주세요"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
                   <v-text-field
                     v-model="discribe"
                     :disabled="isUpdating"
                     filled
                     color="blue-grey-lighten-2"
-                    label="용도"
+                    label="방 설명"
+                    placeholder="방 설명을 입력해주세요"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-autocomplete
                     v-model="inviteList"
                     :disabled="isUpdating"
-                    :items="people"
+                    :items="userList"
                     filled
                     chips
                     closable-chips
+                    clearable
                     color="black-grey-lighten-2"
                     label="초대"
                     item-title="name"
@@ -123,8 +125,8 @@
                     <template v-slot:chip="{ props, item }">
                       <v-chip
                         v-bind="props"
-                        :prepend-avatar="item.raw.avatar"
-                        :text="item.raw.name"
+                        :prepend-avatar="item.raw.profileimage"
+                        :text="item.raw.username"
                       ></v-chip>
                     </template>
                     <template v-slot:item="{ props, item }">
@@ -132,9 +134,9 @@
                       <v-list-item
                         v-else
                         v-bind="props"
-                        :prepend-avatar="item.raw.avatar"
-                        :title="item.raw.name"
-                        :subtitle="item.raw.group"
+                        :prepend-avatar="item.raw.profileimage"
+                        :title="item.raw.username"
+                        :subtitle="item.raw.provider"
                       ></v-list-item>
                     </template>
                   </v-autocomplete>
@@ -150,6 +152,7 @@
               color="blue-grey-lighten-3"
               prepend-icon="mdi-update"
               @click="createChatRoom"
+              class="crateButton"
             >
               생성
             </v-btn>
@@ -164,36 +167,30 @@
 import HomeButton from './home-button.vue'
 import ServerButton3 from './server-button3.vue'
 import $axios from 'axios'
+import { useStore } from 'vuex'
+import { computed } from 'vue'
 export default {
+  setup () {
+    const store = useStore()
+    const getUserList = () => store.dispatch('module1/getUserList')
+    getUserList()
+    const userList = computed(() => store.getters['module1/getUserList'])
+    return { userList, getUserList }
+  },
   props: {
     chatRoomList: Array,
     activeChatRoom: Number,
     userInfo: Object
   },
   data () {
-    const srcs = {
-      1: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-      2: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-      3: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-      4: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-      5: 'https://cdn.vuetifyjs.com/images/lists/5.jpg'
-    }
     return {
       autoUpdate: true,
       isUpdating: false,
       dialog: false,
-      title: '코덕',
-      discribe: '코딩을 좋아하는 방',
+      title: '',
+      discribe: '',
       inviteList: [],
-      imageLink: ['https://i.esdrop.com/d/f/14rMlVHaTh/diKJSu5rRf.png'],
-      people: [
-        { name: '유동준', group: 'Google', avatar: srcs[1], id: 1 },
-        { name: '정기준', group: 'GitHub', avatar: srcs[2], id: 3 },
-        { name: '앨런 쿠퍼', group: 'Naver', avatar: srcs[3], id: 4 },
-        { name: 'FanaTic', group: 'Naver', avatar: srcs[2], id: 5 },
-        { name: '윤정초이', group: 'GitHub', avatar: srcs[4], id: 6 },
-        { name: '기준 정', group: 'Google', avatar: srcs[5], id: 7 }
-      ]
+      imageLink: ['https://i.esdrop.com/d/f/14rMlVHaTh/diKJSu5rRf.png']
     }
   },
   components: {
@@ -203,6 +200,9 @@ export default {
   watch: {
     activeChatRoom (newTab) {
       console.log('chatRoom: ' + newTab)
+    },
+    dialog () {
+      this.getUserList()
     }
   },
   methods: {
@@ -316,10 +316,24 @@ export default {
   border-bottom: solid 2px var(--grey);
 }
 .titleImageBox{
-  height: 200px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
   background-size: cover;
 }
-.imgdiv{
+.imgdiv, .createTitle{
   text-align: center;
+}
+.v-dialog{
+  max-height: calc(70% - 48px);
+  width: calc(70% - 48px);
+  max-width: calc(1000px);
+}
+.v-card{
+  border-radius: 20px;
+}
+.crateButton{
+  background: var(--discord);
+  margin-right: 15px;
 }
 </style>

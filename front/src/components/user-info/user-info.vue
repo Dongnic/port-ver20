@@ -22,7 +22,24 @@
       <!-- 각 컴포넌트(이미지-아이콘)의 사이즈 지정 -->
       <!-- <Mic :size="20" />
       <HeadPhones :size="20" /> -->
-      <Settings :size="20" />
+      <div class="text-center">
+          <v-menu :location="location">
+            <template v-slot:activator="{ props }">
+              <Settings
+              :size="20"
+              v-bind="props" />
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                class="settings"
+              >
+                <v-list-item-title style="cursor: pointer;" @click="change(index)">{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
     </div>
   </div>
 </template>
@@ -35,12 +52,32 @@ import Settings from 'vue-material-design-icons/CogOutline'
 export default {
   // 상위컴포넌트로부터 userName의 값(String타입)을 받는다.
   props: {
-    userInfo: String
+    userInfo: Object
+
   },
   components: {
-    // Mic,
-    // HeadPhones,
     Settings
+  },
+  data: () => ({
+    items: [
+      { title: '설정' },
+      { title: '퇴장' }
+    ],
+    location: 'top'
+  }),
+  methods: {
+    moveTo (url) {
+      this.$router.push(url)
+    },
+    change (value) {
+      console.log(' click : ', value)
+      if (value === 0) {
+        this.moveTo('/settings')
+      } else if (value === 1) {
+        this.$store.dispatch('module1/changeActiveChatRoom', 0)
+        this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
+      }
+    }
   }
 }
 </script>
@@ -48,17 +85,14 @@ export default {
 <style lang="scss" scoped>
 .container {
   grid-area: ui;
-
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
   padding: 10px;
   background-color: var(--quaternary);
   box-shadow: rgba(0, 0, 0, 0.9) 0 1px 0 0;
 }
-
 .profile {
   display: flex;
   align-items: center;
@@ -70,34 +104,31 @@ export default {
   background-color: var(--grey);
   background-size: cover;
 }
-
 .user-data {
   display: flex;
   flex-direction: column;
   margin-left: 8px;
   font-size: 13px;
-
   strong {
     display: block;
     color: var(--white);
     letter-spacing: 1px;
   }
-
   span {
     color: var(--grey);
   }
 }
-
 .actions {
   color: var(--grey);
-
   span {
     cursor: pointer;
     transition: 0.2s;
-
     &:hover {
       color: var(--white);
     }
   }
+}
+.settings:hover{
+    background-color: var(--quinary);
 }
 </style>

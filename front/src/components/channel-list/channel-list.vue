@@ -2,24 +2,50 @@
   <div class="list-container">
     <div class="category">
       <div>Channel List</div>
-      <div class="category-icon">
-        <AddCategoryIcon :size="21" />
+      <div class="category-icon-div">
+        <AddCategoryIcon class="category-icon" :size="21" @click="addChannel" />
+        <REMOVECategoryIcon class="category-icon" :size="21" @click="removeChannel" />
       </div>
     </div>
-    <ChannelButton selected channelName="first channel" />
-    <ChannelButton channelName="second channel" />
-    <ChannelButton channelName="third channel" />
+    <ChannelButton
+      v-for="index in channelCount"
+      :key="index"
+      :channelName="index"
+      :activeChannel="activeChannel"
+      :selected="index === activeChannel"
+      @changeChannel="changeChannel"
+    />
   </div>
 </template>
 
 <script>
 import AddCategoryIcon from 'vue-material-design-icons/Plus'
+import REMOVECategoryIcon from 'vue-material-design-icons/Minus'
 import ChannelButton from './channel-button'
 
 export default {
   components: {
     AddCategoryIcon,
-    ChannelButton
+    ChannelButton,
+    REMOVECategoryIcon
+  },
+  data () {
+    return {
+      channelCount: 3,
+      activeChannel: 1
+    }
+  },
+  methods: {
+    addChannel () {
+      this.channelCount++
+    },
+    removeChannel () {
+      if (this.channelCount > 1) this.channelCount--
+      if (this.channelCount < this.activeChannel) this.activeChannel = this.channelCount
+    },
+    changeChannel (no) {
+      this.activeChannel = no
+    }
   }
 }
 </script>

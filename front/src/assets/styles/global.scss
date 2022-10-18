@@ -36,3 +36,17 @@ body,
   --mention-message: #413F3F;
   --link: #5D80D6;
 }
+
+.message img{
+  max-width: 50% !important;
+  height: auto;
+}
+
+.ql-editor img{
+  max-width: 20% !important;
+  height: auto;
+}
+
+.v-overlay__scrim{
+  background: black !important;
+}

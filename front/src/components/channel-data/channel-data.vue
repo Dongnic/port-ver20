@@ -70,17 +70,19 @@
     <!-- text타입으로 message 작성input tag
     enter키를 누르면 작성한 메세지를 전송-->
     <div class="input-wrapper">
-      <!-- <p>{{content}}</p> -->
-      <!-- <textarea
-        name="message"
-        v-model="content"
-        placeholder="Type a message here, and press enter."
-        id="input-message"
-        @keypress.enter="sendMessage"
-      /> -->
+        <div id="my-toolbar">
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-underline"></button>
+          <button class="ql-strike"></button>
+          <button class="ql-blockquote"></button>
+          <button class="ql-code-block"></button>
+          <button class="ql-image"></button>
+        </div>
+      <!-- </div> -->
       <QuillEditor
+        toolbar="#my-toolbar"
         ref="myEditor"
-        :toolbar="['bold', 'italic', 'underline', 'image', 'link']"
         theme="snow"
         name="message"
         id="input-message"
@@ -90,12 +92,9 @@
         class="edit"
         @keydown.enter.prevent="sendMessage"
         style="height: 59% !important
-                overflow-y: scroll"
-        />
-      <!--아이콘-->
-      <!-- <div class="icon">
-        <At :size="24" />
-      </div> -->
+                overflow-y: scroll
+               "
+      />
     </div>
   </div>
 </template>
@@ -407,5 +406,31 @@ export default {
 }
 .mybody span img {
   max-width: 50% !important;
+}
+</style>
+<style>
+.ql-toolbar .ql-stroke{
+  fill:none;
+  stroke:white;
+}
+.ql-toolbar.ql-snow{
+  border-top-left-radius : 5px;
+  border-top-right-radius : 5px;
+  border-top : 2px solid gray;
+  border-left : 2px solid gray;
+  border-right : 2px solid gray;
+  border-bottom: hidden;
+  opacity: 0.5;
+}
+.ql-toolbar.ql-snow+.ql-container.ql-snow{
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom : 2px solid gray;
+  border-left : 2px solid gray;
+  border-right : 2px solid gray;
+  opacity: 0.5;
+}
+.ql-editor.ql-blank::before{
+    color: white;
 }
 </style>

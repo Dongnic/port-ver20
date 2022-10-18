@@ -1,8 +1,8 @@
 <template>
-  <div class="container" :class="{ active: selected }">
+  <div class="container" :class="{ active: selected }" @click="changeChannel">
     <div class="channel-info">
       <HashTagIcon class="hashIcon" :size="20" />
-      <div>{{ channelName }}</div>
+      <div>Server {{ channelName }}</div>
     </div>
     <div class="channel-actions">
       <!-- 초대아이콘 클래스 -->
@@ -25,8 +25,14 @@ export default {
     SettingIcon
   },
   props: {
-    channelName: String,
-    selected: Boolean
+    channelName: Number,
+    selected: Boolean,
+    activeChannel: Number
+  },
+  methods: {
+    changeChannel () {
+      this.$emit('changeChannel', this.channelName)
+    }
   }
 }
 </script>

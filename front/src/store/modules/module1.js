@@ -5,6 +5,7 @@ export const module1 = {
   state: {
     jwtToken: 'no',
     userInfo: [],
+    userList: [],
     onlineUserList: [],
     offlineUserList: [],
     chatRoomList: [],
@@ -19,6 +20,9 @@ export const module1 = {
     },
     SET_USER_INFO (state, value) {
       state.userInfo = value
+    },
+    SET_USER_LIST (state, value) {
+      state.userList = value
     },
     SET_ONLINEUSER_LIST (state, value) {
       state.onlineUserList = value
@@ -84,6 +88,19 @@ export const module1 = {
         .catch(function (error) {
           console.log('ERROR getUserInfo : ', error)
           commit('SET_USER_NAME', '로그인안함')
+        })
+    },
+    getUserList ({ commit }) {
+      console.log('=======getUserList==========')
+      $axios
+        .get('/user')
+        .then(function (response) {
+          console.log('### $axios /user', response)
+          console.log('userList data : ', response.data)
+          commit('SET_USER_LIST', response.data)
+        })
+        .catch(function (error) {
+          console.log('ERROR getUserList : ', error)
         })
     },
     getOnlineUserList ({ commit }, value) {
@@ -162,6 +179,10 @@ export const module1 = {
     getUserInfo (state) {
       console.log(state.userInfo)
       return state.userInfo
+    },
+    getUserList (state) {
+      console.log(state.userList)
+      return state.userList
     },
     getOnlineUserList (state) {
       console.log(state.onlineUserList)
