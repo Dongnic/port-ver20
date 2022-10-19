@@ -91,8 +91,8 @@ public class UserController {
         return userDetails.getUser();
     }
     // 온라인 유저 리스트
-    @GetMapping("/online/{id}")
-    public ResponseEntity<List<UserDto>> getOnlineUserList(@PathVariable("id") Long chatroomid) throws Exception{
+    @GetMapping("/online/{chatroomid}")
+    public ResponseEntity<List<UserDto>> getOnlineUserList(@PathVariable("chatroomid") Long chatroomid) throws Exception{
         log.info(" ##### UserController getOnlineUserList");
         List<UserDto> onlineUserList = userService.getOnlineUserList(chatroomid);
         return ResponseEntity.status(HttpStatus.OK).body(onlineUserList);
@@ -103,5 +103,12 @@ public class UserController {
         log.info(" ##### UserController getOfflineUserList");
         List<UserDto> offlineUserList = userService.getOfflineUserList(chatroomid);
         return ResponseEntity.status(HttpStatus.OK).body(offlineUserList);
+    }
+    // 미참여 유저 리스트
+    @GetMapping("/other/{chatroomid}")
+    public ResponseEntity<List<UserDto>> getOtherUserList(@PathVariable("chatroomid") Long chatroomid) throws Exception{
+        log.info(" ##### UserController getOtherUserList");
+        List<UserDto> getOtherUserList = userService.getOtherUserList(chatroomid);
+        return ResponseEntity.status(HttpStatus.OK).body(getOtherUserList);
     }
 }

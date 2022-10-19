@@ -24,6 +24,7 @@ import com.im.port.vo.dto.ChatRoomDto;
 import com.im.port.vo.dto.ChatRoomSendDto;
 import com.im.port.vo.dto.ChatUserDto;
 import com.im.port.vo.dto.CreateRoomDto;
+import com.im.port.vo.dto.InviteUserDto;
 import com.im.port.vo.dto.UpdateChatUserDto;
 import com.im.port.vo.dto.UserDto;
 import com.im.port.vo.entity.ChatRoomEntity;
@@ -54,12 +55,15 @@ public class ChatRoomController {
 		chatRoomDto.setUserid(userDto.toEntity());
 		chatRoomDto.setTitle(createRoomDto.getTitle());
 		chatRoomDto.setDiscribe(createRoomDto.getDiscribe());
+		ChatMessageDto chatMessageDto= new ChatMessageDto();
+		chatMessageDto.setId(Long.parseLong("1"));
 		ChatRoomEntity creatRoomResult = chatRoomService.postRoom(chatRoomDto);
 		log.info(" ### ChatRoomController postRoom SUCCESS");
 		if (creatRoomResult.getId() >= 0){
 			ChatUserDto chatUserDto= new ChatUserDto();
 			chatUserDto.setChatroomid(creatRoomResult);
 			chatUserDto.setUserid(chatRoomDto.getUserid());
+			chatUserDto.setChatmessageid(chatMessageDto.toEntity());
 			Long postChatUserResult = chatUserService.postChatUser(chatUserDto);
 			log.info(" ### chatUserDto : " + chatUserDto);
 			log.info(" #### ChatRoomController postChatUser");
@@ -146,5 +150,20 @@ public class ChatRoomController {
 		return ResponseEntity.status(HttpStatus.OK).body("퇴장 성공");
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("DELETE FAIL");
 	}
-
+	// 유저 초대
+	@PostMapping("/room/invite")
+	public ResponseEntity<?> insertChatUser(@RequestBody InviteUserDto inviteUserDto) throws Exception{ 
+		log.info(" ##### ChatRoomController insertChatUser");
+		ChatUserDto chatUserDto= new ChatUserDto();
+		chatUserDto.setChatroomid(inviteUserDto.getChatroomid());
+		Long result=null;
+		for(int i=0; i<inviteUserDto.getInviteList().size();i++){
+			UserDto userDto = userService.findUserById(inviteUserDto.getInviteList().get(i));
+			chatUserDto.setUserid(userDto.toEntity());
+			result = chatUserService.postChatUser(chatUserDto);
+		}
+		if (result != null && result > 0)
+		return ResponseEntity.status(HttpStatus.OK).body("초대 성공");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("INVITE FAIL");
+	}
 }

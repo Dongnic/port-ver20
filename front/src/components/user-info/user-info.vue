@@ -6,7 +6,7 @@
         bordered
         dot
         bottom
-        color="green"
+        color="#00ff55"
         offset-x="-31"
         offset-y="10"
         overlap
@@ -130,5 +130,14 @@ export default {
 }
 .settings:hover{
     background-color: var(--quinary);
+}
+</style>
+<style scoped>
+.userBadge {
+    animation:blink 2s ease-in-out infinite alternate;
+}
+@keyframes blink{
+    0% {opacity:0.2;}
+    100% {opacity:1;}
 }
 </style>

@@ -190,6 +190,7 @@ export default {
       title: '',
       discribe: '',
       inviteList: [],
+      filedatas: [],
       imageLink: ['https://i.esdrop.com/d/f/14rMlVHaTh/diKJSu5rRf.png']
     }
   },
@@ -205,6 +206,14 @@ export default {
       this.getUserList()
     }
   },
+  computed: {
+    backendUrl () {
+      return process.env.VUE_APP_BACKEND_URL
+    },
+    websocketUrl () {
+      return process.env.VUE_APP_WEBSOCKET_URL
+    }
+  },
   methods: {
     changeRoom (no) {
       console.log(' list changeRoom ', no)
@@ -212,9 +221,11 @@ export default {
     },
     selectFile (event) {
       this.imageLink = []
+      this.filedatas = []
       for (const file of event.target.files) {
         const url = URL.createObjectURL(file)
         this.imageLink.push(url)
+        this.filedatas.push('files', file)
       }
       console.log('imageLink : ', this.imageLink)
     },
@@ -231,7 +242,6 @@ export default {
         alert('로그인 하세요')
         return
       }
-      // const vm = this
       const data = {
         title: this.title,
         discribe: this.discribe,
@@ -239,17 +249,31 @@ export default {
         inviteList: this.inviteList
       }
       console.log(data)
-      const vm = this
       $axios
         .post('/api/chat/room', data)
-        .then(function (response) {
-          alert('CREATE SUCESS')
-          vm.dialog = false
+        .then((response) => {
+          alert('방을 만들었습니다.')
+          this.dialog = false
           console.log('생성된 방번호(data) : ', response.data)
           console.log('data type : ', typeof response.data)
-          vm.changeRoom(response.data)
+          const formData = new FormData()
+          for (const file of this.filedatas) {
+            formData.append('files', file)
+          }
+          formData.append('chatroomid', response.data)
+          $axios.post(`${this.backendUrl}/roomImage`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          }).then((response) => {
+            console.log(' 업로드 한 파일 데이터 : ', response.data)
+            console.log(this.files)
+            this.imagesLink = []
+            // this.fetchFiles()
+            this.changeRoom(response.data)
+          }).catch(error => {
+            alert(error.message)
+          })
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error)
         })
     },

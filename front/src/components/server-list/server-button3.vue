@@ -95,7 +95,7 @@ export default {
   }
 }
 
-.serverButton-hasNotifications {
+.serverButton-hasNotifications, .active {
   &::before {
     content: "";
     display: block;
@@ -140,5 +140,14 @@ export default {
   &:hover {
     background-color: var(--secondary) !important;
   }
+}
+.active {
+    &::before {
+      content: "";
+      width: 9px;
+      height: 30px;
+      top: calc(30% - 4.5px);
+      border-radius: 15%;
+    }
 }
 </style>

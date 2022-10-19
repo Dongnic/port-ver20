@@ -69,5 +69,16 @@ public class UserServiceImpl implements IUserService{
         }
         return dtoList;
     }
+
+    @Override
+    public List<UserDto> getOtherUserList(Long chatroomid) throws Exception {
+        log.info(" ##### UserServiceImpl getOtherUserList");
+        List<UserEntity> entityList = repository.findOtherUserSQLBychatroomid(chatroomid);
+        List<UserDto> dtoList = new ArrayList<>();
+        for (UserEntity entity : entityList) {
+            dtoList.add(entity.toDto());
+        }
+        return dtoList;
+    }
     
 }

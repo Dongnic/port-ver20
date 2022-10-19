@@ -8,6 +8,7 @@ export const module1 = {
     userList: [],
     onlineUserList: [],
     offlineUserList: [],
+    otherUserList: [],
     chatRoomList: [],
     chatRoomInfo: [{ title: 'Home' }],
     chatMessageList: [],
@@ -29,6 +30,9 @@ export const module1 = {
     },
     SET_OFFLINEUSER_LIST (state, value) {
       state.offlineUserList = value
+    },
+    SET_OTHERUSER_LIST (state, value) {
+      state.otherUserList = value
     },
     SET_CHATROOM_LIST (state, value) {
       state.chatRoomList = value
@@ -129,6 +133,19 @@ export const module1 = {
           console.log('ERROR getOfflineUserList : ', error)
         })
     },
+    getOtherUserList ({ commit }, value) {
+      console.log('=======getOtherUserList==========')
+      $axios
+        .get('/user/other/' + value)
+        .then(function (response) {
+          console.log('### $axios /user/other/' + value, response)
+          console.log('otherUserList data : ', response.data)
+          commit('SET_OTHERUSER_LIST', response.data)
+        })
+        .catch(function (error) {
+          console.log('ERROR getOtherUserList : ', error)
+        })
+    },
     getChatRoomList ({ commit }, value) {
       console.log('=======getChatRoomList==========')
       console.log(' getChatRoomList value : ', value)
@@ -191,6 +208,10 @@ export const module1 = {
     getOfflineUserList (state) {
       console.log(state.offlineUserList)
       return state.offlineUserList
+    },
+    getOtherUserList (state) {
+      console.log(state.otherUserList)
+      return state.otherUserList
     },
     getChatRoomList (state) {
       console.log(state.chatRoomList)

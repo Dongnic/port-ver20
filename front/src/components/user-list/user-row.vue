@@ -11,10 +11,11 @@
         bordered
         dot
         bottom
-        :color="isOnline ? 'green' : 'red'"
+        :color="isOnline ? '#00ff55' : '#ff3535'"
         offset-x="-31"
         offset-y="10"
         overlap
+        class="userBadge"
       ></v-badge>
     </div>
     <!-- String타입의 닉네임 출력 -->
@@ -85,5 +86,14 @@ export default {
   .botAvatar {
     background-color: var(--mention-detail);
   }
+}
+</style>
+<style scoped>
+.userBadge {
+    animation:blink 2s ease-in-out infinite alternate;
+}
+@keyframes blink{
+    0% {opacity:0.2;}
+    100% {opacity:1;}
 }
 </style>

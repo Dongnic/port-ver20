@@ -1,7 +1,7 @@
 <template>
   <div id="grid">
     <ServerList :chatRoomList="chatRoomList" :activeChatRoom="activeChatRoom" @changeRoom="changeRoom" :userInfo="userInfo"/>
-    <ServerName v-show="activeChatRoom > 0" :chatRoomInfo="chatRoomInfo" :author="chatRoomInfo.userid" :userid="userInfo.id"/>
+    <ServerName v-show="activeChatRoom > 0" :author="chatRoomInfo.userid" :userid="userInfo.id"/>
     <ServerName2 v-show="activeChatRoom === 0" chatRoomName="다이렉트 메세지" />
     <ChannelList v-show="activeChatRoom" />
     <ChannelList v-show="!activeChatRoom" />

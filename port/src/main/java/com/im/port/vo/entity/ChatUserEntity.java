@@ -40,7 +40,7 @@ public class ChatUserEntity {
     @JoinColumn(name="chatroomid")
     private ChatRoomEntity chatroomid;
 
-    @ColumnDefault("1")
+    @ColumnDefault("'1'")
     @ManyToOne(targetEntity = ChatMessageEntity.class, fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name="chatmessageid")
     private ChatMessageEntity chatmessageid;

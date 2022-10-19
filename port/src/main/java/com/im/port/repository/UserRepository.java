@@ -36,4 +36,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                  + " AND c.userid IS NULL            "
                  + " AND b.chatroomid = :chatroomid  ", nativeQuery = true)
     public List<UserEntity> findOfflineUserSQLBychatroomid(@Param(value = "chatroomid") Long chatroomid);
+    @Query(value = " SELECT a.*                         "
+                 + " FROM user a                        "
+                 + " WHERE userid                       "
+                 + " NOT IN (                           "
+                 + " 	SELECT DISTINCT userid          "
+                 + " 	FROM chatuser                   "
+                 + " 	WHERE chatroomid = :chatroomid  "
+                 + " )                                  ", nativeQuery = true)
+    public List<UserEntity> findOtherUserSQLBychatroomid(@Param(value = "chatroomid") Long chatroomid);
 }

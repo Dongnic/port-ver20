@@ -89,4 +89,5 @@ export default {
   font-weight: 500;
   text-transform: uppercase;
 }
+
 </style>
