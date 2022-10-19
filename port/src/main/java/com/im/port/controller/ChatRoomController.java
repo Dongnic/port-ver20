@@ -23,6 +23,7 @@ import com.im.port.vo.dto.ChatMessageDto;
 import com.im.port.vo.dto.ChatRoomDto;
 import com.im.port.vo.dto.ChatRoomSendDto;
 import com.im.port.vo.dto.ChatUserDto;
+import com.im.port.vo.dto.CreateDMDto;
 import com.im.port.vo.dto.CreateRoomDto;
 import com.im.port.vo.dto.InviteUserDto;
 import com.im.port.vo.dto.UpdateChatUserDto;
@@ -73,6 +74,43 @@ public class ChatRoomController {
 				chatUserDto.setUserid(userDto.toEntity());
 				postChatUserResult = chatUserService.postChatUser(chatUserDto);
 			}
+			return ResponseEntity.status(HttpStatus.OK).body(creatRoomResult.getId());
+		}
+		else
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CREATE FAIL");
+	}
+	// 1:1채팅 생성
+	@PostMapping("/DM")
+	public ResponseEntity<?> postDMRoom(@RequestBody CreateDMDto craterDMDto) throws Exception {
+		log.info(" ##### ChatRoomController postDMRoom");
+		Long userid = craterDMDto.getUserid();
+		Long otherid = craterDMDto.getOtherid();
+		UserDto userDto = userService.findUserById(userid);
+		UserDto otherDto = userService.findUserById(otherid);
+		// 방 만들고 방 번호 반환
+		ChatRoomEntity chatRoomEntity = chatRoomService.getDMRoom(userid, otherid);
+		if(chatRoomEntity != null){
+			return ResponseEntity.status(HttpStatus.OK).body(chatRoomEntity.toDto());
+		}
+		ChatRoomDto chatRoomDto= new ChatRoomDto();
+		chatRoomDto.setUserid(userDto.toEntity());
+		chatRoomDto.setOtherid(otherid);
+		chatRoomDto.setRoomtype("DM");
+		chatRoomDto.setTitle(userDto.getUsername()+" & "+otherDto.getUsername());
+		chatRoomDto.setDiscribe(userDto.getUsername()+" & "+otherDto.getUsername()+ " 오붓한 시간");
+		ChatMessageDto chatMessageDto= new ChatMessageDto();
+		chatMessageDto.setId(Long.parseLong("1"));
+		ChatRoomEntity creatRoomResult = chatRoomService.postRoom(chatRoomDto);
+		log.info(" ### ChatRoomController postRoom SUCCESS");
+		if (creatRoomResult.getId() >= 0){
+			ChatUserDto chatUserDto= new ChatUserDto();
+			chatUserDto.setChatroomid(creatRoomResult);
+			chatUserDto.setChatmessageid(chatMessageDto.toEntity());
+			chatUserDto.setUserid(userDto.toEntity());
+			Long resultUser = chatUserService.postChatUser(chatUserDto);
+			chatUserDto.setUserid(otherDto.toEntity());
+			Long resultOther = chatUserService.postChatUser(chatUserDto);
+			System.out.println(resultUser+resultOther);
 			return ResponseEntity.status(HttpStatus.OK).body(creatRoomResult.getId());
 		}
 		else

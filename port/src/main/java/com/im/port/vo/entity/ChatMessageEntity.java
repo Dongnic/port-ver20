@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,6 +48,9 @@ public class ChatMessageEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String message;
     
+    @ColumnDefault("'CHATROOM'")
+    private String roomtype; // "sub"
+
     @CreationTimestamp
     private Timestamp regdate;
 
@@ -56,6 +60,7 @@ public class ChatMessageEntity {
                 .userid(userid)
                 .chatroomid(chatroomid)
                 .message(message)
+                .roomtype(roomtype)
                 .regdate(regdate)
                 .build();
     }    

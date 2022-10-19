@@ -47,6 +47,12 @@ const routes = [
       import(/* webpackChunkName: "test" */ '../views/test/StoreTest.vue')
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: () =>
+      import(/* webpackChunkName: "settings" */ '../components/my-page/settings-menu.vue')
+  },
+  {
     path: '/loginJoin',
     name: 'LoginJoin',
     component: () =>

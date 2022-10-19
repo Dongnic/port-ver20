@@ -10,6 +10,7 @@
       :isBot="user.isBot"
       :profileimage="user.profileimage"
       :isOnline="true"
+      @click="toDM(user.id)"
     />
 
     <div class="title-users">Off-line {{ getOfflineUsersCount }}</div>
@@ -21,18 +22,21 @@
       :isBot="user.isBot"
       :profileimage="user.profileimage"
       :isOnline="false"
+      @click="toDM(user.id)"
     />
   </div>
 </template>
 
 <script>
 import UserRow from './user-row'
+import $axios from 'axios'
 
 export default {
   // 상위 compo로부터 Userlist를 Object(객체)(키:값) 형식으로 데이터를 받는다.
   props: {
     onlineUserList: Object,
-    offlineUserList: Object
+    offlineUserList: Object,
+    userInfo: Object
   },
   // 현재페이지에서 쓸 컴포넌트 정의
   components: {
@@ -53,6 +57,29 @@ export default {
     },
     getOfflineUsersCount () {
       return this.offlineUserList.length
+    }
+  },
+  methods: {
+    toDM (otherid) {
+      if (otherid === this.userInfo.id) {
+        alert('자신에게는 DMd을 할 수 없습니다.')
+      }
+      console.log('toDM')
+      console.log('otherid : ', otherid)
+      console.log('userid : ', this.userInfo.id)
+      const data = {
+        userid: this.userInfo.id,
+        otherid: otherid
+      }
+      $axios
+        .post('/api/chat/DM', data)
+        .then((response) => {
+          this.$emit('changeRoom', 0)
+          this.$store.dispatch('module1/setDMInfo', response.data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 }

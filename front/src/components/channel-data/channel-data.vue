@@ -411,7 +411,34 @@ export default {
 <style>
 .ql-toolbar .ql-stroke{
   fill:none;
+  stroke:gray;
+}
+.input-wrapper:focus-within .ql-toolbar.ql-snow{
+   border-top-left-radius : 5px;
+  border-top-right-radius : 5px;
+  border-top : 2px solid white;
+  border-left : 2px solid white;
+  border-right : 2px solid white;
+  border-bottom: hidden;
+  opacity: 0.5;
+}
+.input-wrapper:focus-within .ql-toolbar.ql-snow+.ql-container.ql-snow{
+   border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom : 2px solid white;
+  border-left : 2px solid white;
+  border-right : 2px solid white;
+  opacity: 0.5;
+}
+.input-wrapper:focus-within .ql-toolbar.ql-snow button{
+  fill:none;
   stroke:white;
+  opacity:none;
+}
+.input-wrapper:focus-within .ql-toolbar.ql-snow button svg .ql-stroke{
+  fill:none;
+  stroke:white;
+  opacity:none;
 }
 .ql-toolbar.ql-snow{
   border-top-left-radius : 5px;

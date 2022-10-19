@@ -24,7 +24,8 @@ public class ChatMessageDto {
     private UserEntity userid;
     private ChatRoomEntity chatroomid;
     private String message;
-    
+    private String roomtype; // "sub"
+
     @JsonFormat(pattern = "HH:mm MM월dd일")
     private Timestamp regdate;
 
@@ -34,6 +35,7 @@ public class ChatMessageDto {
                 .userid(userid)
                 .chatroomid(chatroomid)
                 .message(message)
+                .roomtype(roomtype)
                 .regdate(regdate)
                 .build();
     }    

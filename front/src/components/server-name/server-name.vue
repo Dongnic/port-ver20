@@ -283,6 +283,7 @@ export default {
         this.inviteDialog = !this.inviteDialog
         // 방 설정
       } else if (index === 1) {
+        if (this.author !== this.userid) alert('방 관리자만 설정가능합니다.')
         this.settingDialog = !this.settingDialog
       // 방 나가기
       } else if (index === 2) {

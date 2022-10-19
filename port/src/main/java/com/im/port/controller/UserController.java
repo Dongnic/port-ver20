@@ -111,4 +111,11 @@ public class UserController {
         List<UserDto> getOtherUserList = userService.getOtherUserList(chatroomid);
         return ResponseEntity.status(HttpStatus.OK).body(getOtherUserList);
     }
+    // DM 유저 리스트
+    @GetMapping("/DM/{userid}")
+    public ResponseEntity<List<UserDto>> getDmUserList(@PathVariable("userid") Long userid) throws Exception{
+        log.info(" ##### UserController getDmUserList");
+        List<UserDto> getDmUserList = userService.getDmUserList(userid);
+        return ResponseEntity.status(HttpStatus.OK).body(getDmUserList);
+    }
 }

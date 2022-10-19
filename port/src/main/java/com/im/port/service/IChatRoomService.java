@@ -7,6 +7,7 @@ import com.im.port.vo.entity.ChatRoomEntity;
 
 public interface IChatRoomService {
     ChatRoomEntity postRoom(ChatRoomDto chatRoomDto) throws Exception;
+    ChatRoomEntity getDMRoom(Long userid, Long otherid) throws Exception;
     void deleteRoom(Long chatRoomId) throws Exception;
 	List<ChatRoomDto> getAllChatRooms() throws Exception;
 	List<ChatRoomDto> getChatRooms(Long id) throws Exception;

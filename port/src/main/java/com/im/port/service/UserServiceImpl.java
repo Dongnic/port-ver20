@@ -80,5 +80,16 @@ public class UserServiceImpl implements IUserService{
         }
         return dtoList;
     }
+
+    @Override
+    public List<UserDto> getDmUserList(Long userid) throws Exception {
+        log.info(" ##### UserServiceImpl getDmUserList");
+        List<UserEntity> entityList = repository.DMUserSQLByuserid(userid);
+        List<UserDto> dtoList = new ArrayList<>();
+        for (UserEntity entity : entityList) {
+            dtoList.add(entity.toDto());
+        }
+        return dtoList;
+    }
     
 }

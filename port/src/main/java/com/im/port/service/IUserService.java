@@ -13,4 +13,5 @@ public interface IUserService {
     List<UserDto> getOnlineUserList(Long chatroomid) throws Exception;
     List<UserDto> getOfflineUserList(Long chatroomid) throws Exception;
     List<UserDto> getOtherUserList(Long chatroomid) throws Exception;
+    List<UserDto> getDmUserList(Long userid) throws Exception;
 }

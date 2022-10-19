@@ -15,6 +15,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
     @Query(value =    " SELECT count(*)                     "
                     + " FROM chatmessage b                  "
                     + " WHERE 1=1                           "
+                    + " AND roomtype = 'CHATROOM'           "
                     + " AND chatroomid = :chatroomid        "
                     + " AND chatmessageid > (               "
                     + "  SELECT a.chatmessageid             "

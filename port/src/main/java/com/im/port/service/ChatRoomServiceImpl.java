@@ -60,5 +60,9 @@ public class ChatRoomServiceImpl implements IChatRoomService {
 		repository.delete(
             repository.findById(chatRoomId).orElseThrow());
 	}
+	@Override
+	public ChatRoomEntity getDMRoom(Long userid, Long otherid) throws Exception {
+		return repository.selectDMSQLByUseridAndOtherid(userid, otherid);
+	}
 
 }

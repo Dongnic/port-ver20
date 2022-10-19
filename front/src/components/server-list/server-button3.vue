@@ -84,6 +84,8 @@ export default {
     bottom: -4px;
     right: -4px;
 
+    animation:blink 1s ease-in-out infinite alternate;
+
     position: absolute;
     border-radius: 12px;
     border: solid 4px var(--tertiary);
@@ -94,7 +96,10 @@ export default {
     color: var(--white);
   }
 }
-
+@keyframes blink{
+    0% {opacity:0.4;}
+    100% {opacity:1;}
+}
 .serverButton-hasNotifications, .active {
   &::before {
     content: "";

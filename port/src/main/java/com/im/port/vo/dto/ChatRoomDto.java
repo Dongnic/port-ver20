@@ -21,7 +21,9 @@ public class ChatRoomDto {
     private String roomimage; 
     private UserEntity userid;
     private Timestamp regdate;
-
+    private String roomtype; // "sub"
+    private Long otherid; // "sub
+    
     public ChatRoomEntity toEntity(){
         return ChatRoomEntity.builder()
                 .id(id)
@@ -29,6 +31,8 @@ public class ChatRoomDto {
                 .discribe(discribe)
                 .roomimage(roomimage)
                 .userid(userid)
+                .otherid(otherid)
+                .roomtype(roomtype)
                 .regdate(regdate)
                 .build();
     }

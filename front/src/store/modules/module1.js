@@ -5,10 +5,12 @@ export const module1 = {
   state: {
     jwtToken: 'no',
     userInfo: [],
+    dmInfo: [],
     userList: [],
     onlineUserList: [],
     offlineUserList: [],
     otherUserList: [],
+    dmUserList: [],
     chatRoomList: [],
     chatRoomInfo: [{ title: 'Home' }],
     chatMessageList: [],
@@ -22,6 +24,9 @@ export const module1 = {
     SET_USER_INFO (state, value) {
       state.userInfo = value
     },
+    SET_DM_INFO (state, value) {
+      state.dmInfo = value
+    },
     SET_USER_LIST (state, value) {
       state.userList = value
     },
@@ -33,6 +38,9 @@ export const module1 = {
     },
     SET_OTHERUSER_LIST (state, value) {
       state.otherUserList = value
+    },
+    SET_DMUSER_LIST (state, value) {
+      state.dmUserList = value
     },
     SET_CHATROOM_LIST (state, value) {
       state.chatRoomList = value
@@ -65,6 +73,9 @@ export const module1 = {
       dispatch('getChatRoomInfo', value)
       // dispatch('getOnlineUserList', value)
       // dispatch('getOfflineUserList', value)
+    },
+    setDMInfo ({ commit }, value) {
+      commit('SET_DM_INFO', value)
     },
     addChatMessage ({ commit }, value) {
       commit('ADD_CHATMESSAGE_LIST', value)
@@ -146,6 +157,19 @@ export const module1 = {
           console.log('ERROR getOtherUserList : ', error)
         })
     },
+    getDmUserList ({ commit }, value) {
+      console.log('=======getDmUserList==========')
+      $axios
+        .get('/user/DM/' + value)
+        .then(function (response) {
+          console.log('### $axios /user/DM/' + value, response)
+          console.log('dmUserList data : ', response.data)
+          commit('SET_DMUSER_LIST', response.data)
+        })
+        .catch(function (error) {
+          console.log('ERROR getDmUserList : ', error)
+        })
+    },
     getChatRoomList ({ commit }, value) {
       console.log('=======getChatRoomList==========')
       console.log(' getChatRoomList value : ', value)
@@ -213,6 +237,10 @@ export const module1 = {
       console.log(state.otherUserList)
       return state.otherUserList
     },
+    getDmUserList (state) {
+      console.log(state.dmUserList)
+      return state.dmUserList
+    },
     getChatRoomList (state) {
       console.log(state.chatRoomList)
       return state.chatRoomList
@@ -220,6 +248,10 @@ export const module1 = {
     getChatRoomInfo (state) {
       console.log(state.chatRoomInfo)
       return state.chatRoomInfo
+    },
+    getDmInfo (state) {
+      console.log(state.dmInfo)
+      return state.dmInfo
     },
     getChatMessageList (state) {
       console.log(state.chatMessageList)

@@ -17,19 +17,24 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
     public Optional<ChatRoomEntity> findById(Long id);
     public List<ChatRoomEntity> findByUserid(Long id);
 
-    @Query(value = " SELECT "
-                 + "   a.chatroomid as chatroomid "
-                 + " , a.title as title "
-                 + " , a.userid as userid "
-                 + " , a.discribe as discribe "
-                 + " , a.roomimage as roomimage "
-                 + " , a.regdate as regdate "
-                 + " FROM chatroom a "
-                 + " LEFT JOIN chatuser b "
+    @Query(value = " SELECT                         "
+                 + "   a.*                          "
+                 + " FROM chatroom a                "
+                 + " LEFT JOIN chatuser b           "
                  + " ON a.chatroomid = b.chatroomid "
-                 + " WHERE 1=1 "
+                 + " WHERE 1=1                      "
+                 + " AND roomtype = 'CHATROOM'      "
                  + " AND b.userid = :userid ", nativeQuery = true)
     public List<ChatRoomEntity> selectSQLByUserid(@Param(value = "userid") Long id);
+
+    @Query(value = " SELECT a.*                  "
+                 + " FROM chatroom a             "
+                 + " WHERE 1=1                   "
+                 + " AND a.userid = :userid      "
+                 + " AND a.otherid = :otherid    "
+                 + " AND a.roomtype = 'DM'       "
+                ,nativeQuery = true)
+    public ChatRoomEntity selectDMSQLByUseridAndOtherid(@Param(value = "userid") Long userid, @Param(value = "otherid") Long otherid);
 
     @Transactional
     @Modifying

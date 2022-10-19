@@ -10,6 +10,7 @@
         offset-x="-31"
         offset-y="10"
         overlap
+        class="userBadge"
       ></v-badge>
       </div>
       <div class="user-data">
@@ -41,6 +42,14 @@
           </v-menu>
         </div>
     </div>
+    <v-dialog
+        v-model="isSettings"
+      >
+      <SettingsMenu
+        :isSettings="isSettings"
+        @changeSettings="changeSettings"
+      />
+      </v-dialog>
   </div>
 </template>
 
@@ -48,31 +57,35 @@
 // import Mic from 'vue-material-design-icons/Microphone'
 // import HeadPhones from 'vue-material-design-icons/Headphones'
 import Settings from 'vue-material-design-icons/CogOutline'
+import SettingsMenu from '@/components/my-page/settings-menu'
 
 export default {
   // 상위컴포넌트로부터 userName의 값(String타입)을 받는다.
   props: {
     userInfo: Object
-
   },
   components: {
-    Settings
+    Settings,
+    SettingsMenu
   },
   data: () => ({
     items: [
       { title: '설정' },
       { title: '퇴장' }
     ],
-    location: 'top'
+    location: 'top',
+    isSettings: false
   }),
   methods: {
-    moveTo (url) {
-      this.$router.push(url)
+    changeSettings () {
+      this.isSettings = false
     },
     change (value) {
       console.log(' click : ', value)
+      // 설정
       if (value === 0) {
-        this.moveTo('/settings')
+        this.isSettings = !this.isSettings
+      // 퇴장
       } else if (value === 1) {
         this.$store.dispatch('module1/changeActiveChatRoom', 0)
         this.$store.dispatch('module1/getChatRoomList', this.userInfo.id)
@@ -139,5 +152,9 @@ export default {
 @keyframes blink{
     0% {opacity:0.2;}
     100% {opacity:1;}
+}
+.v-dialog{
+  max-height: calc(90% - 48px);
+  max-width: calc(90% - 48px);
 }
 </style>

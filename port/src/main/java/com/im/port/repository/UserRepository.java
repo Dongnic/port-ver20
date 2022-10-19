@@ -45,4 +45,16 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                  + " 	WHERE chatroomid = :chatroomid  "
                  + " )                                  ", nativeQuery = true)
     public List<UserEntity> findOtherUserSQLBychatroomid(@Param(value = "chatroomid") Long chatroomid);
+    @Query(value = " SELECT a.*                        "
+                 + " FROM user a                       "
+                 + " WHERE userid IN (                 "
+                 + " 	SELECT b.userid                "
+                 + " 	FROM chatroom b                "
+                 + " 	WHERE b.otherid = :userid      "
+                 + " 	UNION                          "
+                 + " 	SELECT c.otherid               "
+                 + " 	FROM chatroom c                "
+                 + " 	WHERE c.userid = :userid       "
+                 + " )                                 ", nativeQuery = true)
+    public List<UserEntity> DMUserSQLByuserid(@Param(value = "userid") Long userid);
 }

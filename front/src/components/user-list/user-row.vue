@@ -15,7 +15,7 @@
         offset-x="-31"
         offset-y="10"
         overlap
-        class="userBadge"
+        :class="{'userBadge': isOnline}"
       ></v-badge>
     </div>
     <!-- String타입의 닉네임 출력 -->
@@ -93,7 +93,7 @@ export default {
     animation:blink 2s ease-in-out infinite alternate;
 }
 @keyframes blink{
-    0% {opacity:0.2;}
+    0% {opacity:0.4;}
     100% {opacity:1;}
 }
 </style>
